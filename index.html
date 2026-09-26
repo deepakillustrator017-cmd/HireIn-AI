@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hirematch AI</title>
+  <style>
+    body{
+      font-family:Arial,sans-serif;
+      background:#F5F3FF;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+    }
+    .card{
+      width:360px;
+      background:#fff;
+      padding:25px;
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.1);
+    }
+    h1{color:#6C3EF4;text-align:center;}
+    p{text-align:center;color:#666;}
+    input,select{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border:1px solid #ddd;
+      border-radius:10px;
+      box-sizing:border-box;
+    }
+    button{
+      width:100%;
+      padding:14px;
+      background:#6C3EF4;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    #result{
+      margin-top:15px;
+      text-align:center;
+      font-size:22px;
+      color:#6C3EF4;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Hirematch AI</h1>
+    <p>Find your perfect job match</p>
+
+    <select id="role">
+      <option>Graphic Designer</option>
+      <option>UI/UX Designer</option>
+      <option>Social Media Designer</option>
+    </select>
+
+    <input id="exp" type="number" placeholder="Years of experience">
+    <input id="skills" placeholder="Photoshop, Figma, Illustrator">
+
+    <button onclick="check()">Check Suitability</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function check(){
+      let score = 50;
+      const exp = Number(document.getElementById("exp").value)||0;
+      const skills = document.getElementById("skills").value.toLowerCase();
+
+      score += Math.min(exp*5,25);
+      if(skills.includes("figma")) score += 10;
+      if(skills.includes("photoshop")) score += 10;
+      if(skills.includes("illustrator")) score += 5;
+
+      if(score>100) score=100;
+
+      document.getElementById("result").innerHTML = score+"% Match";
+    }
+  </script>
+</body>
+</html>

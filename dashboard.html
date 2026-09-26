@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Candidate Dashboard | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/dashboard.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html" aria-current="page">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <button class="site-signin" type="button" data-logout>Log Out</button>
+</div></header>
+<main class="page-shell">
+  <section class="page-heading"><div><h1>Your career dashboard</h1><p>Welcome, <strong id="userName">Candidate</strong>. Track your HireIn AI activity here.</p></div><div class="form-actions"><a class="small-button" href="job-grid.html">Browse jobs</a><a class="small-button" href="ats.html">Check resume</a></div></section>
+  <p id="dashboardMessage" class="notice" role="status" aria-live="polite"></p>
+  <section class="stat-grid" aria-label="Account summary">
+    <div class="stat-card"><span>Applied jobs</span><strong id="applicationCount">0</strong></div>
+    <div class="stat-card"><span>Saved jobs</span><strong id="savedCount">0</strong></div>
+    <div class="stat-card"><span>ATS checks</span><strong id="atsCount">0</strong></div>
+    <div class="stat-card"><span>Resume files</span><strong id="resumeCount">0</strong></div>
+  </section>
+  <div class="section-stack">
+    <section class="panel"><h2>Applied Jobs</h2><div class="table-wrap"><table><thead><tr><th>Role</th><th>Company</th><th>Status</th><th>Applied</th></tr></thead><tbody id="applicationList"><tr><td colspan="4" class="empty">Loading applications...</td></tr></tbody></table></div></section>
+    <section class="panel"><h2>Saved Jobs</h2><div class="table-wrap"><table><thead><tr><th>Role</th><th>Company</th><th>Action</th></tr></thead><tbody id="savedList"><tr><td colspan="3" class="empty">Loading saved jobs...</td></tr></tbody></table></div></section>
+    <section class="panel"><h2>ATS History</h2><div class="table-wrap"><table><thead><tr><th>Job</th><th>Score</th><th>Date</th></tr></thead><tbody id="atsList"><tr><td colspan="3" class="empty">Loading ATS history...</td></tr></tbody></table></div></section>
+    <section class="panel"><h2>Resume Management</h2><p class="muted">Your PDFs are stored in a private bucket. Download links expire after one hour.</p><div class="table-wrap"><table><thead><tr><th>File</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody id="resumeList"><tr><td colspan="3" class="empty">Loading resumes...</td></tr></tbody></table></div></section>
+  </div>
+</main>
+</body>
+</html>

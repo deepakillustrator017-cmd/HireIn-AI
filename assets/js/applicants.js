@@ -1,0 +1,14 @@
+document.addEventListener("DOMContentLoaded",async function(){
+  var api=window.hireInAI,client=api&&api.client;if(!client)return;
+  var notice=document.getElementById("applicantsMessage"),tbody=document.getElementById("applicantRows");
+  var auth=await client.auth.getUser(),user=auth.data&&auth.data.user;if(!user){location.href="login.html?next=applicants.html";return;}
+  var profile=await api.getProfile(user.id),role=profile.data&&profile.data.role;if(role!=="recruiter"&&role!=="admin"){api.showMessage(notice,"Recruiter access is required to view applicants.","error");return;}
+  var query=client.from("applications").select("id,name,email,phone,portfolio,cover_letter,resume_url,status,applied_at,jobs!applications_job_id_fkey(title,created_by)").order("id",{ascending:false});
+  var result=await query;if(result.error){tbody.innerHTML="<tr><td colspan='5' class='empty'>"+api.escapeHtml(result.error.message)+"</td></tr>";return;}
+  var rows=result.data||[];if(role==="recruiter")rows=rows.filter(function(row){return row.jobs&&row.jobs.created_by===user.id;});
+  if(!rows.length){tbody.innerHTML="<tr><td colspan='5' class='empty'>No applicants for your jobs yet.</td></tr>";return;}
+  var html=[];
+  for(var i=0;i<rows.length;i++){var item=rows[i],signed=item.resume_url?await client.storage.from("resumes").createSignedUrl(item.resume_url,3600):{data:null};var resume=signed.data&&signed.data.signedUrl;html.push("<tr><td><strong>"+api.escapeHtml(item.name||"Candidate")+"</strong><div class='muted'>"+api.escapeHtml(item.email||"—")+" · "+api.escapeHtml(item.phone||"—")+"</div></td><td>"+api.escapeHtml(item.jobs&&item.jobs.title||"—")+"</td><td>"+api.escapeHtml(item.applied_at?new Date(item.applied_at).toLocaleDateString():"—")+"</td><td>"+(resume?"<a class='text-link' target='_blank' rel='noopener' href='"+api.escapeHtml(resume)+"'>Resume PDF</a>":"—")+"</td><td><select aria-label='Application status' data-status='"+Number(item.id)+"'><option"+(item.status==="Applied"?" selected":"")+">Applied</option><option"+(item.status==="Reviewing"?" selected":"")+">Reviewing</option><option"+(item.status==="Interview"?" selected":"")+">Interview</option><option"+(item.status==="Rejected"?" selected":"")+">Rejected</option><option"+(item.status==="Hired"?" selected":"")+">Hired</option></select></td></tr>");}
+  tbody.innerHTML=html.join("");
+  tbody.addEventListener("change",async function(event){var field=event.target.closest("[data-status]");if(!field)return;var update=await client.from("applications").update({status:field.value}).eq("id",Number(field.dataset.status));if(update.error)api.showMessage(notice,"Could not update status: "+update.error.message,"error");else api.showMessage(notice,"Applicant status saved.","success");});
+});

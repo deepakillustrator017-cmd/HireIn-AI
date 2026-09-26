@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Post a Job | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/post-job.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <a class="site-signin" href="admin.html">Recruiter Dashboard</a>
+</div></header>
+<main class="page-shell">
+  <section class="page-heading"><div><h1 id="jobPageTitle">Post a Job</h1><p>Add the role details candidates need to apply.</p></div></section>
+  <section class="panel" style="max-width:850px">
+    <p id="jobMessage" class="notice" role="status" aria-live="polite"></p>
+    <form id="jobForm">
+      <div class="form-grid">
+        <div class="field"><label for="title">Job title</label><input id="title" name="title" required maxlength="180"></div>
+        <div class="field"><label for="company">Company</label><input id="company" name="company" required maxlength="180"></div>
+        <div class="field"><label for="category">Category</label><input id="category" name="category" maxlength="100" placeholder="Design, Engineering, Marketing"></div>
+        <div class="field"><label for="location">Location</label><input id="location" name="location" required maxlength="160" placeholder="Remote or city"></div>
+        <div class="field"><label for="type">Job type</label><select id="type" name="type"><option>Full time</option><option>Part time</option><option>Contract</option><option>Freelance</option><option>Internship</option></select></div>
+        <div class="field"><label for="salary">Salary range</label><input id="salary" name="salary" maxlength="120" placeholder="Optional"></div>
+      </div>
+      <div class="field"><label for="description">Job description</label><textarea id="description" name="description" rows="9" required maxlength="12000"></textarea></div>
+      <div class="form-actions"><button type="submit">Publish Job</button><a class="text-link" href="admin.html">Cancel</a></div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

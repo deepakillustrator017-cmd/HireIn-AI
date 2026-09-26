@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Applicants | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/applicants.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html" aria-current="page">Recruiters</a></nav>
+  <a class="site-signin" href="admin.html">Jobs Dashboard</a>
+</div></header>
+<main class="page-shell">
+  <section class="page-heading"><div><h1>Applicants</h1><p>Review applications for jobs managed by your recruiter account.</p></div></section>
+  <p id="applicantsMessage" class="notice" role="status" aria-live="polite"></p>
+  <section class="panel"><div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Job</th><th>Applied</th><th>Resume</th><th>Status</th></tr></thead><tbody id="applicantRows"><tr><td colspan="5" class="empty">Loading applicants...</td></tr></tbody></table></div></section>
+</main>
+</body>
+</html>

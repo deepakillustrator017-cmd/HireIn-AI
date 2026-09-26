@@ -1,0 +1,129 @@
+/* ================================
+   HireIn AI PREMIUM
+================================ */
+
+:root{
+  --primary:#6C3EF4;
+  --secondary:#8B5CF6;
+  --bg:#F8F7FF;
+  --white:#FFFFFF;
+  --text:#111827;
+  --muted:#6B7280;
+  --border:#ECE7FF;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,sans-serif;
+}
+
+/* Header */
+.header,
+.sticky-bar{
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+
+.main-menu li a{
+  font-weight:600;
+  color:#374151;
+}
+
+.main-menu li a:hover,
+.main-menu li.active{
+  color:var(--primary)!important;
+}
+
+/* Hero */
+.banner-hero{
+  background:
+  radial-gradient(circle at top right,
+  rgba(108,62,244,.18),transparent 35%),
+  linear-gradient(180deg,#FFFFFF,#F5F2FF);
+  border-radius:32px;
+  margin:24px;
+  overflow:hidden;
+}
+
+.heading-banner{
+  font-size:64px;
+  line-height:1.05;
+  font-weight:800;
+  color:#111827;
+}
+
+.heading-banner span{
+  color:var(--primary);
+}
+
+.banner-text{
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.8;
+  max-width:580px;
+}
+
+/* Search Box */
+.search-wrapper{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:0 12px 35px rgba(108,62,244,.08);
+  padding:10px;
+}
+
+.search-wrapper input,
+.search-wrapper select{
+  border:none;
+  background:transparent;
+}
+
+.search-wrapper input:focus{
+  outline:none;
+}
+
+.btn-purple{
+  background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+  color:#fff;
+  border-radius:14px;
+  padding:16px 26px;
+  font-weight:700;
+  transition:.3s;
+}
+
+.btn-purple:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 35px rgba(108,62,244,.3);
+}
+
+/* Cards */
+.category-card,
+.job-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:22px;
+  transition:.35s;
+}
+
+.category-card:hover,
+.job-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 45px rgba(108,62,244,.12);
+}
+
+/* Section */
+.section-title{
+  font-size:42px;
+  font-weight:800;
+  color:#111827;
+}
+
+.badge-ai{
+  background:rgba(108,62,244,.1);
+  color:var(--primary);
+  padding:8px 16px;
+  border-radius:999px;
+  font-weight:700;
+}

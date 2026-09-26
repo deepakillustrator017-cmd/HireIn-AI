@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HireIn AI | Live Jobs</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="assets/css/hirein-app.css">
+<script defer src="assets/js/supabase-client.js"></script>
+<script defer src="assets/js/jobs.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+<a class="site-brand" href="index.html">HireIn AI</a>
+<nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html" aria-current="page">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+<a class="site-signin" href="login.html">Sign In</a>
+</div></header>
+<main class="page-shell">
+<section class="page-heading"><div><h1>Find your next role</h1><p>Search open opportunities from HireIn AI employers.</p></div></section>
+<form id="searchForm" class="jobs-toolbar"><input id="search" type="search" aria-label="Search jobs" placeholder="Search by title, company, or location"><button type="submit">Search</button></form>
+<div id="jobsMessage" class="notice" role="status" aria-live="polite"></div>
+<section class="grid" id="jobs" aria-live="polite"><div class="empty">Loading jobs…</div></section>
+</main>
+</body>
+</html>

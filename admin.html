@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Recruiter Dashboard | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/admin.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html" aria-current="page">Recruiters</a></nav>
+  <button class="site-signin" type="button" data-logout>Log Out</button>
+</div></header>
+<main class="page-shell">
+  <section class="page-heading"><div><h1>Recruiter Dashboard</h1><p>Manage your published opportunities and applications.</p></div><div class="form-actions"><a class="small-button" href="post-job.html">Post a Job</a><a class="small-button" href="applicants.html">View Applicants</a></div></section>
+  <p id="adminMessage" class="notice" role="status" aria-live="polite"></p>
+  <section id="adminContent" class="panel" hidden>
+    <div class="table-wrap"><table><thead><tr><th>Job</th><th>Company</th><th>Location</th><th>Salary</th><th>Actions</th></tr></thead><tbody id="jobRows"><tr><td colspan="5" class="empty">Loading jobs...</td></tr></tbody></table></div>
+  </section>
+</main>
+</body>
+</html>

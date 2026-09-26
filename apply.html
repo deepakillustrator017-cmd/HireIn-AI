@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Apply for a Job | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/apply.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <a class="site-signin" href="login.html">Sign In</a>
+</div></header>
+<main class="page-shell">
+  <section class="panel" style="max-width:760px;margin-inline:auto">
+    <h1>Apply Now</h1>
+    <p id="jobTitle" class="job-summary">Loading job...</p>
+    <p id="status" class="notice" role="status" aria-live="polite"></p>
+    <a id="loginLink" class="small-button" href="login.html" hidden>Sign in to apply</a>
+    <form id="applicationForm">
+      <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
+      <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="40"></div>
+      <div class="field"><label for="portfolio">Portfolio URL <span class="muted">(optional)</span></label><input id="portfolio" name="portfolio" type="url" placeholder="https://" maxlength="500"></div>
+      <div class="field"><label for="resumeFile">Resume PDF</label><input id="resumeFile" name="resume_file" type="file" accept="application/pdf,.pdf" required><span class="muted">PDF only, up to 5 MB. Your file is stored privately.</span></div>
+      <div class="field"><label for="coverLetter">Cover letter <span class="muted">(optional)</span></label><textarea id="coverLetter" name="cover_letter" rows="6" maxlength="5000"></textarea></div>
+      <button id="submitButton" type="submit" disabled>Submit Application</button>
+    </form>
+    <a class="text-link" href="job-grid.html">Back to jobs</a>
+  </section>
+</main>
+</body>
+</html>

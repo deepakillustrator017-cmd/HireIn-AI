@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireIn AI | Job Details</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{background:#F6F4FF;color:#222}
+nav{background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.nav{max-width:1200px;margin:auto;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:30px;font-weight:800;color:#6C3EF4;text-decoration:none}
+.menu{display:flex;gap:28px}
+.menu a{text-decoration:none;color:#444;font-weight:600}
+.btn-login{background:#6C3EF4;color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none}
+.container{max-width:1000px;margin:auto;padding:50px 20px}
+.card{background:#fff;border-radius:22px;padding:35px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+.head{display:flex;gap:20px;align-items:center;margin-bottom:25px}
+.head img{width:90px;height:90px;border-radius:18px;object-fit:cover;background:#eee}
+.category{color:#6C3EF4;font-size:13px;font-weight:700;text-transform:uppercase}
+.company{font-size:18px;color:#666;font-weight:700}
+h1{font-size:38px;margin:8px 0}
+.meta{display:flex;gap:20px;flex-wrap:wrap;color:#666;margin:15px 0}
+.salary{font-size:30px;font-weight:800;color:#6C3EF4;margin:20px 0}
+.section{margin-top:28px}
+.section h3{margin-bottom:10px}
+.apply{display:inline-block;margin-top:30px;background:#6C3EF4;color:#fff;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700}
+.loading{text-align:center;padding:80px;color:#777}
+@media(max-width:700px){.menu{gap:12px}.nav{flex-wrap:wrap}h1{font-size:30px}.container{padding:25px 15px}}
+</style>
+</head>
+<body>
+<nav><div class="nav">
+<a href="index.html" class="logo">HireIn AI</a>
+<div class="menu"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">ATS</a><a href="dashboard.html">Dashboard</a></div>
+<a href="login.html" class="btn-login">Sign In</a>
+</div></nav>
+<main class="container"><div id="job" class="loading" role="status">Loading job...</div></main>
+<script>
+const jobBox=document.getElementById("job");
+const jobId=new URLSearchParams(window.location.search).get("id");
+const escapeHtml=(value)=>String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+const safeImage=(value)=>{const url=String(value||"");return /^(https?:\/\/|assets\/)/i.test(url)?escapeHtml(url):"https://placehold.co/120x120?text=AI";};
+async function loadJob(){
+  if(!/^\d+$/.test(jobId||"")){jobBox.textContent="Invalid job link. Open this page from a job listing.";return;}
+  if(!window.supabase?.createClient){jobBox.textContent="Supabase could not load. Check your internet connection and refresh.";return;}
+  const client=window.supabase.createClient("https://xyazcbtxuahzrkxdzywy.supabase.co","sb_publishable_q6gw-Br9OjigN_ETqi17yw_RuKBx2Fs");
+  try{
+    const result=await client.from("jobs").select("*").eq("id",jobId).single();
+    if(result.error||!result.data)throw new Error(result.error?.message||"Job not found.");
+    const data=result.data;
+    document.title=String(data.title||"Job Details")+" | HireIn AI";
+    const date=data.posted_at?new Date(data.posted_at):null;
+    const posted=date&&!Number.isNaN(date.getTime())?date.toLocaleDateString("en-IN"):"Recently";
+    jobBox.className="";
+    jobBox.innerHTML='<article class="card"><div class="head"><img src="'+safeImage(data.logo)+'" alt="'+escapeHtml(data.company||"Company")+' logo"><div><div class="category">'+escapeHtml(data.category||"Design")+'</div><div class="company">'+escapeHtml(data.company||"Company")+'</div><h1>'+escapeHtml(data.title||"Untitled job")+'</h1></div></div><div class="meta"><div>📍 '+escapeHtml(data.location||"Remote")+'</div><div>💼 '+escapeHtml(data.type||"Full Time")+'</div><div>🗓 Posted '+escapeHtml(posted)+'</div></div><div class="salary">'+escapeHtml(data.salary||"Not Disclosed")+'</div><section class="section"><h3>Job Description</h3><p>'+escapeHtml(data.description||"No description provided.")+'</p></section><section class="section"><h3>Skills Required</h3><p>'+escapeHtml(data.skills||"Skills not specified.")+'</p></section><a href="apply.html?id='+encodeURIComponent(data.id)+'" class="apply">Apply Now</a></article>';
+  }catch(error){console.error("Job lookup failed:",error);jobBox.textContent="Could not load this job: "+error.message;}
+}
+loadJob();
+</script>
+</body>
+</html>

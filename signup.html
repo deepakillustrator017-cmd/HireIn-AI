@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Create Account | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/auth.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="index.html">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <a class="site-signin" href="login.html">Sign In</a>
+</div></header>
+<main class="auth-layout">
+  <section class="auth-card">
+    <h1>Create your account</h1><p>Join HireIn AI to apply, save jobs, and review your resume.</p>
+    <form id="signupForm">
+      <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
+      <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required><span class="muted">Use at least 8 characters.</span></div>
+      <button type="submit">Create Account</button>
+    </form>
+    <p id="authMessage" class="notice" role="status" aria-live="polite"></p>
+    <div class="auth-links"><a href="login.html">Already have an account? Sign in</a></div>
+  </section>
+</main>
+</body>
+</html>
