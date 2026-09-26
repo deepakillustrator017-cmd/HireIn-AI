@@ -39,7 +39,7 @@
       var posted = job.posted_at || job.created_at;
       var date = posted && !Number.isNaN(new Date(posted).getTime()) ? new Date(posted).toLocaleDateString("en-IN") : "Recently";
       return "<div class='col-lg-4 col-md-6'><article class='card-grid-2 hover-up'><div class='card-block-info'>" +
-        "<div class='row align-items-center'><div class='col-8'><div class='card-2-img-text'><span class='card-grid-2-img-small'><img loading='lazy' src='" + safeLogo(job.logo) + "' alt=''></span><span>" + escape(company) + "</span></div></div><div class='col-4 text-end'><span class='btn btn-grey-small disc-btn'>" + escape(job.employment_type || job.type || "Full time") + "</span></div></div>" +
+        "<div class='row align-items-center'><div class='col-8'><div class='card-2-img-text'><span class='card-grid-2-img-small'><img loading='lazy' src='" + safeLogo(job.logo) + "' alt=''></span><span>" + escape(company) + "</span></div></div><div class='col-4 text-end'>" + (job.featured ? "<span class='home-featured-tag'>Featured</span> " : "") + "<span class='btn btn-grey-small disc-btn'>" + escape(job.employment_type || job.type || "Full time") + "</span></div></div>" +
         "<h5 class='mt-20'><a href='/job/" + id + "'>" + escape(job.title || "Open role") + "</a></h5><div class='mt-15'><span class='card-time'>" + escape(date) + "</span><span class='card-location'>" + escape(job.location || workMode(job)) + "</span></div>" +
         "<div class='card-2-bottom mt-30'><div class='row'><div class='col-8'><span class='card-text-price'>" + escape(job.salary || "Salary not listed") + "</span></div><div class='col-4 text-end'><a class='btn btn-border btn-brand-hover' href='/job/" + id + "'>View job</a></div></div></div></div></article></div>";
     }
@@ -49,6 +49,7 @@
       wrapper.innerHTML = companies.slice(0, 12).map(function (company) {
         return "<div class='swiper-slide hover-up'><div class='item-logo'><a href='/jobs?company=" + encodeURIComponent(company) + "'><span class='home-company-name'>" + escape(company) + "</span></a></div></div>";
       }).join("");
+      if (wrapper.swiper) wrapper.swiper.update();
     }
     function renderTestimonials(rows) {
       var section = document.getElementById("homeTestimonials");
@@ -77,6 +78,7 @@
           var category = navButton ? navButton.textContent.trim().toLowerCase() : "";
           var subset = category ? jobs.filter(function (job) { return String(job.category || "").toLowerCase().indexOf(category) >= 0; }) : jobs;
           if (!subset.length) subset = jobs;
+          subset = subset.slice().sort(function (a,b) { return Number(b.featured === true) - Number(a.featured === true); });
           var row = pane.querySelector(".row");
           if (row) row.innerHTML = subset.slice(0, 6).map(renderHomeCard).join("") || "<div class='col-12'><p class='empty'>No live opportunities right now. Check back soon.</p></div>";
         });

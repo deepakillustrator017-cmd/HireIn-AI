@@ -146,6 +146,7 @@ body a:not(.site-brand):not(.site-signin){color:var(--hirein-purple)}
 .resume-section-heading h3{margin:0}.resume-entry{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 14px;padding:14px;border:1px solid var(--hirein-border);border-radius:14px;min-width:0}
 .resume-entry .field{min-width:0;margin:0}.resume-entry .field:has(textarea){grid-column:1/-1}.resume-entry textarea{min-height:90px}.resume-entry>button{grid-column:1/-1;justify-self:start}
 .resume-builder-page .ai-action{margin-top:8px}.resume-builder-page .secondary-button{border:1px solid var(--hirein-border)!important;background:#fff!important;color:var(--hirein-purple)!important}
+.resume-ai-actions{display:flex;gap:8px;flex-wrap:wrap}.resume-ai-actions .ai-action{margin-top:4px}
 .resume-preview-wrap{position:sticky;top:88px;min-width:0}.resume-preview-label{margin:0 0 10px;color:var(--hirein-muted);font-size:13px;font-weight:700}
 .resume-sheet{width:100%;min-height:420px;aspect-ratio:210/297;padding:clamp(24px,4vw,46px);overflow-wrap:anywhere;background:#fff;color:#202536;border:1px solid var(--hirein-border);box-shadow:0 12px 36px rgba(43,31,92,.1);font-family:Inter,Arial,sans-serif}
 .resume-sheet header{padding-bottom:16px;border-bottom:2px solid var(--hirein-purple)}.resume-sheet h1{margin:0;color:#202536;font-size:clamp(23px,3vw,34px);letter-spacing:-.04em}.resume-sheet header p{margin:8px 0 0;font-size:11px;overflow-wrap:anywhere}

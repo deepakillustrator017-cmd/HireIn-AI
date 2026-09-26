@@ -65,8 +65,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       var d = data(), input = {resume:d, text:target === "summary" ? d.summary : target === "skills" ? d.skills.join(", ") : d.experience.map(function (x) { return x.role+" at "+x.organization+"\n"+x.details; }).join("\n")};
       var result = await service.request(button.dataset.ai,input);
       if (target === "summary" && result.summary) form.elements.summary.value = result.summary;
+      else if (target === "summary" && result.correctedText) form.elements.summary.value = result.correctedText;
+      else if (target === "summary" && result.optimizedText) form.elements.summary.value = result.optimizedText;
       else if (target === "skills" && Array.isArray(result.skills)) form.elements.skills.value = result.skills.join(", ");
       else if (target === "experienceList" && Array.isArray(result.bullets) && d.experience.length) { var details = document.querySelectorAll("#experienceList textarea[name=details]"); if (details[0]) details[0].value = result.bullets.join("\n"); }
+      else if (target === "experienceList" && Array.isArray(result.achievements) && result.achievements.length) { var boxes = document.querySelectorAll("#experienceList textarea[name=details]"); if (!boxes.length) { addEntry("experience"); boxes = document.querySelectorAll("#experienceList textarea[name=details]"); } boxes[0].value += (boxes[0].value ? "\n" : "") + result.achievements.map(function (value) { return value + " [verify and add your real result]"; }).join("\n"); }
       render(); api.showMessage(notice,"AI draft ready. Review it for accuracy before using it.","success");
     } catch (error) { api.showMessage(notice,error.message,"error"); } finally { button.disabled = false; }
   }); });

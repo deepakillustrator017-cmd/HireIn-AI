@@ -7130,6 +7130,7 @@ label {
 .home-ai-tools{display:flex;gap:10px;flex-wrap:wrap}
 .home-ai-tools .btn{margin-top:0}
 .home-company-name{display:block;max-width:160px;overflow:hidden;color:#43336f;font-weight:700;text-overflow:ellipsis;white-space:nowrap}
+.home-featured-tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#efe9ff;color:#6c3ef4;font-size:10px;font-weight:700;vertical-align:middle}
 .home-testimonial{height:100%;padding:24px;border:1px solid #eee9fb;border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(43,31,92,.06)}
 .home-testimonial p{color:#4b5563;line-height:1.7}
 .home-testimonial strong,.home-testimonial span{display:block}
