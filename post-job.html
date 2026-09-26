@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <body>
 <header class="site-header"><div class="site-header-inner">
   <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
   <a class="site-signin" href="admin.html">Recruiter Dashboard</a>
 </div></header>
 <main class="page-shell">
@@ -27,9 +27,15 @@
         <div class="field"><label for="category">Category</label><input id="category" name="category" maxlength="100" placeholder="Design, Engineering, Marketing"></div>
         <div class="field"><label for="location">Location</label><input id="location" name="location" required maxlength="160" placeholder="Remote or city"></div>
         <div class="field"><label for="type">Job type</label><select id="type" name="type"><option>Full time</option><option>Part time</option><option>Contract</option><option>Freelance</option><option>Internship</option></select></div>
+        <div class="field"><label for="work_mode">Work mode</label><select id="work_mode" name="work_mode"><option>Onsite</option><option>Hybrid</option><option>Remote</option></select></div>
+        <div class="field"><label for="experience">Experience</label><input id="experience" name="experience" maxlength="100" placeholder="e.g. 2–4 years"></div>
         <div class="field"><label for="salary">Salary range</label><input id="salary" name="salary" maxlength="120" placeholder="Optional"></div>
+        <div class="field"><label for="salary_min">Minimum annual salary (INR)</label><input id="salary_min" name="salary_min" type="number" min="0" step="1000"></div>
+        <div class="field"><label for="salary_max">Maximum annual salary (INR)</label><input id="salary_max" name="salary_max" type="number" min="0" step="1000"></div>
+        <div class="field"><label for="logo">Company logo URL</label><input id="logo" name="logo" type="url" maxlength="1000" placeholder="https://"></div>
       </div>
       <div class="field"><label for="description">Job description</label><textarea id="description" name="description" rows="9" required maxlength="12000"></textarea></div>
+      <div class="form-grid"><div class="field"><label for="responsibilities">Responsibilities</label><textarea id="responsibilities" name="responsibilities" rows="5" maxlength="8000"></textarea></div><div class="field"><label for="requirements">Requirements</label><textarea id="requirements" name="requirements" rows="5" maxlength="8000"></textarea></div><div class="field"><label for="skills">Skills (comma separated)</label><input id="skills" name="skills" maxlength="1500"></div><div class="field"><label for="benefits">Benefits</label><textarea id="benefits" name="benefits" rows="4" maxlength="4000"></textarea></div></div>
       <div class="form-actions"><button type="submit">Publish Job</button><a class="text-link" href="admin.html">Cancel</a></div>
     </form>
   </section>

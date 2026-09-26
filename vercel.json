@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/jobs", "destination": "/jobs.html" },
+    { "source": "/job/:id", "destination": "/job-single.html?id=:id" },
+    { "source": "/apply", "destination": "/apply.html" },
+    { "source": "/ats", "destination": "/ats.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/recruiter", "destination": "/admin.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/forgot-password", "destination": "/forgot-password.html" },
+    { "source": "/reset-password", "destination": "/reset-password.html" }
+  ]
+}

@@ -15,8 +15,9 @@
     element.className="notice"+(kind?" "+kind:"");
   };
   var safeNext = function() {
-    var next=new URLSearchParams(location.search).get("next")||"dashboard.html";
-    return /^[a-z0-9/_-]+\.html(?:\?.*)?$/i.test(next)?next:"dashboard.html";
+    var next=new URLSearchParams(location.search).get("next")||"/dashboard";
+    if(!/^\/?(?:index(?:\.html)?|jobs(?:\.html)?|job\/\d+|apply(?:\.html)?|ats(?:\.html)?|dashboard(?:\.html)?|recruiter(?:\.html)?|login(?:\.html)?|signup(?:\.html)?)(?:\?[a-z0-9_%=&./-]*)?$/i.test(next))return "/dashboard";
+    return next.charAt(0)==="/"?next:"/"+next;
   };
   var getProfile = function(userId) {
     return client.from("profiles").select("user_id,full_name,role").eq("user_id",userId).maybeSingle();

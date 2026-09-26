@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -8,13 +8,15 @@
   <link rel="stylesheet" href="assets/css/hirein-app.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
   <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/ai-service.js"></script>
   <script defer src="assets/js/ats.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
   <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html" aria-current="page">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html" aria-current="page">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
   <a class="site-signin" href="login.html">Sign In</a>
 </div></header>
 <main class="page-shell">
@@ -25,7 +27,7 @@
     <form id="atsForm">
       <div class="field"><label for="jobId">Choose a job (optional)</label><select id="jobId" name="job_id"><option value="">Paste a job description below</option></select></div>
       <div class="field"><label for="jobDescription">Job description</label><textarea id="jobDescription" name="description" rows="7" required placeholder="Paste the job description here, or choose a job above."></textarea></div>
-      <div class="field"><label for="resumeFile">Resume PDF</label><input id="resumeFile" type="file" accept="application/pdf,.pdf" required><span class="muted">PDF only, up to 5 MB. Scanned image-only PDFs may not be readable.</span></div>
+      <div class="field"><label for="resumeFile">Resume file</label><input id="resumeFile" type="file" accept="application/pdf,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx" required><span class="muted">PDF or DOCX, up to 5 MB. Scanned image-only PDFs may not be readable.</span></div>
       <button id="analyzeButton" type="submit">Analyze Resume</button>
     </form>
   </section>
@@ -33,10 +35,11 @@
     <h2>Your match estimate</h2>
     <div class="score-ring" id="scoreRing" role="img" aria-label="ATS match score"><span><strong id="scoreValue">0</strong>%</span></div>
     <div class="form-grid">
-      <div><h3>Matched keywords</h3><p id="matchedKeywords" class="muted"></p></div>
+      <div><h3>Matched skills</h3><p id="matchedKeywords" class="muted"></p></div>
       <div><h3>Missing keywords</h3><p id="missingKeywords" class="muted"></p></div>
     </div>
     <h3>Suggestions</h3><div id="suggestions" class="muted"></div>
+    <h3>Formatting issues</h3><div id="formattingIssues" class="muted"></div>
     <p class="muted">This is a keyword-based estimate for guidance, not an automated hiring decision.</p>
   </section>
 </main>

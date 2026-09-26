@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /recruiter
+Disallow: /admin.html
+Disallow: /applicants.html
+Disallow: /post-job.html
+Disallow: /apply
+Disallow: /apply.html
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Sitemap: https://hireinai.in/sitemap.xml

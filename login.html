@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <body>
 <header class="site-header"><div class="site-header-inner">
   <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
   <a class="site-signin" href="signup.html">Create account</a>
 </div></header>
 <main class="auth-layout">
@@ -24,8 +24,10 @@
       <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
       <button type="submit">Sign In</button>
     </form>
+    <button id="googleLogin" class="google-login" type="button">Continue with Google</button>
     <p id="authMessage" class="notice" role="status" aria-live="polite"></p>
-    <div class="auth-links"><a href="signup.html">Create an account</a><a href="job-grid.html">Browse jobs</a></div>
+    <div class="auth-links"><a href="/forgot-password">Forgot password?</a><a href="/signup">Create an account</a></div>
+    <div class="auth-links"><a href="/jobs">Browse jobs</a></div>
   </section>
 </main>
 </body>

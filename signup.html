@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <body>
 <header class="site-header"><div class="site-header-inner">
   <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="job-grid.html">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
+  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
   <a class="site-signin" href="login.html">Sign In</a>
 </div></header>
 <main class="auth-layout">
@@ -25,6 +25,7 @@
       <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required><span class="muted">Use at least 8 characters.</span></div>
       <button type="submit">Create Account</button>
     </form>
+    <button id="googleLogin" class="google-login" type="button">Sign up with Google</button>
     <p id="authMessage" class="notice" role="status" aria-live="polite"></p>
     <div class="auth-links"><a href="login.html">Already have an account? Sign in</a></div>
   </section>

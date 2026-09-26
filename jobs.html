@@ -1,2 +1,40 @@
-﻿<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0; url=job-grid.html"><link rel="canonical" href="job-grid.html"><title>Jobs | HireIn AI</title><script>location.replace("job-grid.html"+location.search+location.hash);</script></head><body><p>Opening HireIn AI jobs... <a href="job-grid.html">Continue to jobs</a></p></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <meta name="description" content="Search live HireIn AI jobs by role, location, experience, salary and work mode.">
+  <title>Jobs | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/jobs.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs" aria-current="page">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/dashboard">Dashboard</a><a href="/recruiter">Recruiter</a></nav>
+  <a class="site-signin" href="/login">Login</a>
+</div></header>
+<main class="page-shell">
+  <section class="page-heading"><div><h1>Find your next role</h1><p>Explore verified opportunities and find the right fit for your next career move.</p></div></section>
+  <form id="searchForm" class="jobs-toolbar"><label class="sr-only" for="search">Search jobs</label><input id="search" type="search" aria-label="Search by role, company, skill, or location" placeholder="Search by role, company, skill, or location"><button type="submit">Search</button></form>
+  <section class="panel job-filters" aria-label="Job filters">
+    <div class="form-grid">
+      <div class="field"><label for="filterCompany">Company</label><select id="filterCompany"><option value="">All companies</option></select></div>
+      <div class="field"><label for="filterLocation">Location</label><select id="filterLocation"><option value="">All locations</option></select></div>
+      <div class="field"><label for="filterExperience">Experience</label><select id="filterExperience"><option value="">Any experience</option><option value="entry">Entry level</option><option value="mid">Mid level</option><option value="senior">Senior level</option></select></div>
+      <div class="field"><label for="filterSalary">Minimum salary</label><select id="filterSalary"><option value="0">Any salary</option><option value="300000">₹3 LPA+</option><option value="600000">₹6 LPA+</option><option value="1000000">₹10 LPA+</option><option value="1500000">₹15 LPA+</option></select></div>
+      <div class="field"><label for="filterMode">Work mode</label><select id="filterMode"><option value="">Any work mode</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></div>
+      <div class="field"><label for="filterType">Employment type</label><select id="filterType"><option value="">Any employment type</option><option>Full time</option><option>Part time</option><option>Contract</option><option>Freelance</option><option>Internship</option></select></div>
+      <div class="field"><label for="sortJobs">Sort by</label><select id="sortJobs"><option value="newest">Newest</option><option value="salary-high">Salary: high to low</option><option value="salary-low">Salary: low to high</option></select></div>
+    </div>
+  </section>
+  <p id="jobsMessage" class="notice" role="status" aria-live="polite"></p>
+  <p id="jobsCount" class="jobs-count" aria-live="polite"></p>
+  <section class="grid" id="jobs" aria-live="polite"><div class="empty">Loading jobs…</div></section>
+  <nav id="jobsPagination" class="pagination" aria-label="Jobs pages"></nav>
+</main>
+</body>
+</html>

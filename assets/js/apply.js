@@ -14,32 +14,35 @@ document.addEventListener("DOMContentLoaded",async function(){
   var profile=await api.getProfile(user.id);
   if(profile.data&&profile.data.full_name)form.elements.full_name.value=profile.data.full_name;
   if(user.email)form.elements.email.value=user.email;
+  var savedResume=document.getElementById("savedResume"),resumeQuery=await client.from("resumes").select("id,name,storage_path").eq("user_id",user.id).order("created_at",{ascending:false});
+  (resumeQuery.data||[]).forEach(function(resume){var option=document.createElement("option");option.value=resume.id;option.textContent=resume.name;option.dataset.path=resume.storage_path;savedResume.appendChild(option);});
+  savedResume.addEventListener("change",function(){document.getElementById("resumeFile").required=!savedResume.value;});
   submit.disabled=false;
   form.addEventListener("submit",async function(event){
     event.preventDefault();
-    var values=new FormData(form),file=values.get("resume_file");
-    if(!file||!file.size){api.showMessage(notice,"Choose your resume PDF to continue.","error");return;}
-    if(file.type!=="application/pdf"||file.size>5*1024*1024){api.showMessage(notice,"Upload a PDF smaller than 5 MB.","error");return;}
+    var values=new FormData(form),file=values.get("resume_file"),chosen=savedResume.options[savedResume.selectedIndex],path=chosen&&chosen.value?chosen.dataset.path:null,resumeId=chosen&&chosen.value?Number(chosen.value):null;
+    if(!path&&(!file||!file.size)){api.showMessage(notice,"Choose a saved resume or upload a PDF to continue.","error");return;}
+    if(!path&&(file.type!=="application/pdf"||file.size>5*1024*1024)){api.showMessage(notice,"Upload a PDF smaller than 5 MB.","error");return;}
     submit.disabled=true;api.showMessage(notice,"Uploading resume and submitting your application…","");
-    var cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-    var path=user.id+"/applications/"+crypto.randomUUID()+"-"+cleanName;
-    var upload=await client.storage.from("resumes").upload(path,file,{contentType:"application/pdf",upsert:false});
-    if(upload.error){api.showMessage(notice,"Resume upload failed: "+upload.error.message,"error");submit.disabled=false;return;}
-    var resume=await client.from("resumes").insert({user_id:user.id,name:file.name,storage_path:path}).select("id").single();
-    if(resume.error){await client.storage.from("resumes").remove([path]);api.showMessage(notice,"Could not save resume record: "+resume.error.message,"error");submit.disabled=false;return;}
+    var newResumeId=null,uploadedPath=null;
+    if(!path){var cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"),uploadedPath=user.id+"/applications/"+crypto.randomUUID()+"-"+cleanName;
+      var upload=await client.storage.from("resumes").upload(uploadedPath,file,{contentType:"application/pdf",upsert:false});
+      if(upload.error){api.showMessage(notice,"Resume upload failed: "+upload.error.message,"error");submit.disabled=false;return;}
+      var resume=await client.from("resumes").insert({user_id:user.id,name:file.name,storage_path:uploadedPath}).select("id").single();
+      if(resume.error){await client.storage.from("resumes").remove([uploadedPath]);api.showMessage(notice,"Could not save resume record: "+resume.error.message,"error");submit.disabled=false;return;} newResumeId=resume.data.id;path=uploadedPath;
+    }
     var application=await client.from("applications").insert({
       job_id:Number(jobId),user_id:user.id,name:String(values.get("full_name")).trim(),
       email:String(values.get("email")).trim(),phone:String(values.get("phone")).trim(),
       portfolio:String(values.get("portfolio")).trim()||null,
       cover_letter:String(values.get("cover_letter")).trim()||null,
-      resume_url:path,status:"Applied"
+      resume_url:path,resume_path:path,status:"Applied"
     });
     if(application.error){
-      await client.from("resumes").delete().eq("id",resume.data.id);
-      await client.storage.from("resumes").remove([path]);
+      if(newResumeId){await client.from("resumes").delete().eq("id",newResumeId);await client.storage.from("resumes").remove([uploadedPath]);}
       api.showMessage(notice,"Application could not be submitted: "+application.error.message,"error");submit.disabled=false;return;
     }
     api.showMessage(notice,"Application submitted. You can track it in your dashboard.","success");
-    form.reset();submit.disabled=true;
+    form.reset();document.getElementById("resumeFile").required=true;submit.disabled=true;
   });
 });

@@ -1,21 +1,30 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="no-js" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <title>HireIn AI | Find Your Dream Job</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <meta name="description" content="" />
+    <meta name="description" content="Find your next role with HireIn AI. Explore verified opportunities and build an ATS-friendly resume with AI." />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:title" content="" />
-    <meta property="og:type" content="" />
-    <meta property="og:url" content="" />
-    <meta property="og:image" content="" />
+    <link rel="canonical" href="https://hireinai.in/" />
+    <meta property="og:title" content="HireIn AI | Find Your Dream Job" />
+    <meta property="og:description" content="Find your next role and build an ATS-friendly resume with HireIn AI." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://hireinai.in/" />
+    <meta property="og:image" content="https://hireinai.in/assets/imgs/banner/banner.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HireIn AI | Find Your Dream Job" />
+    <meta name="twitter:description" content="Find your next role and build an ATS-friendly resume with HireIn AI." />
+    <meta name="twitter:image" content="https://hireinai.in/assets/imgs/banner/banner.png" />
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/plugins/animate.min.css" />
     <link rel="stylesheet" href="assets/css/main.css?v=1.0" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="assets/js/supabase-client.js"></script>
+    <script defer src="assets/js/home.js"></script>
 </head>
 
 <body>
@@ -48,10 +57,10 @@
                                     </ul>
                                 </li>
                                 <li class="has-children">
-                                    <a href="job-grid.html">Jobs</a>
+                                    <a href="/jobs">Jobs</a>
                                     <ul class="sub-menu">
-                                        <li><a href="job-grid.html">Job Grid</a></li>
-                                        <li><a href="job-grid-2.html">Job Grid 2</a></li>
+                                        <li><a href="/jobs">Job Grid</a></li>
+                                        <li><a href="/jobs">Job Grid 2</a></li>
                                         <li><a href="job-list.html">Job List</a></li>
                                         <li class="hr"><span></span></li>
                                         <li><a href="job-single.html">Job Single 01</a></li>
@@ -157,10 +166,10 @@
                                     </ul>
                                 </li>
                                 <li class="has-children">
-                                    <a href="job-grid.html">Jobs</a>
+                                    <a href="/jobs">Jobs</a>
                                     <ul class="sub-menu">
-                                        <li><a href="job-grid.html">Job Grid</a></li>
-                                        <li><a href="job-grid-2.html">Job Grid 2</a></li>
+                                        <li><a href="/jobs">Job Grid</a></li>
+                                        <li><a href="/jobs">Job Grid 2</a></li>
                                         <li><a href="job-list.html">Job List</a></li>
                                         <li class="hr"><span></span></li>
                                         <li><a href="job-single.html">Job Single 01</a></li>
@@ -505,6 +514,10 @@
                                         </select>
                                         <button class="btn btn-default btn-find">Search jobs</button>
                                     </form>
+                                    <div class="home-ai-tools mt-20">
+                                        <a class="btn btn-border" href="/resume-ai.html">Build your AI resume</a>
+                                        <a class="btn btn-border" href="/ats">Check your ATS score</a>
+                                    </div>
                                 </div>
                                 <div class="list-tags-banner mt-60 wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
                                     <strong>Popular Searches:</strong>
@@ -527,8 +540,22 @@
                 </div>
             </div>
         </section>
+        <section class="section-box home-live-stats" aria-label="HireIn AI live statistics">
+            <div class="container"><div class="row g-3">
+                <div class="col-6 col-lg-3"><div class="home-stat-card"><strong id="homeOpenJobs">—</strong><span>Open jobs</span></div></div>
+                <div class="col-6 col-lg-3"><div class="home-stat-card"><strong id="homeCompanies">—</strong><span>Hiring companies</span></div></div>
+                <div class="col-6 col-lg-3"><div class="home-stat-card"><strong id="homeRemoteJobs">—</strong><span>Remote roles</span></div></div>
+                <div class="col-6 col-lg-3"><div class="home-stat-card"><strong id="homeFeaturedRoles">—</strong><span>Featured roles</span></div></div>
+            </div></div>
+        </section>
+        <section class="section-box mt-50" id="homeTestimonials" aria-labelledby="homeTestimonialsTitle" hidden>
+            <div class="container"><div class="row"><div class="col-12"><h2 class="section-title mb-30" id="homeTestimonialsTitle">What candidates say</h2></div></div>
+                <div class="row" id="homeTestimonialsList"></div>
+            </div>
+        </section>
         <div class="section-box wow animate__animated animate__fadeIn mt-70">
             <div class="container">
+                <h2 class="section-title mb-20">Top companies hiring</h2>
                 <div class="box-swiper">
                     <div class="swiper-container swiper-group-6">
                         <div class="swiper-wrapper pb-70 pt-5">
@@ -567,18 +594,18 @@
                             requirements.</p>
                     </div>
                     <div class="col-lg-5 text-lg-end text-start wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                        <a href="job-grid-2.html" class="mt-sm-15 mt-lg-30 btn btn-border icon-chevron-right">Browse all</a>
+                        <a href="/jobs" class="mt-sm-15 mt-lg-30 btn btn-border icon-chevron-right">Browse all</a>
                     </div>
                 </div>
                 <div class="row mt-70">
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img alt="HireIn AI" src="assets/imgs/theme/icons/marketing.svg" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Marketing & Communication</a>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Marketing & Communication</a>
                             </h5>
                             <p class="text-center text-stroke-40 mt-20">156 Available Vacancy</p>
                         </div>
@@ -586,68 +613,68 @@
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img alt="HireIn AI" src="assets/imgs/theme/icons/content-writer.svg" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Content <br>Writer</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Content <br>Writer</a></h5>
                             <p class="text-center text-stroke-40 mt-20">268 Available Vacancy</p>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12 wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
                         <div class="card-grid hover-up">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img src="assets/imgs/theme/icons/marketing-director.svg" alt="HireIn AI" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Marketing <br>Director</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Marketing <br>Director</a></h5>
                             <p class="text-center text-stroke-40 mt-20">145 Available Vacancy</p>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img src="assets/imgs/theme/icons/system-analyst.svg" alt="HireIn AI" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">System <br>Analyst</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">System <br>Analyst</a></h5>
                             <p class="text-center text-stroke-40 mt-20">236 Available Vacancy</p>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img src="assets/imgs/theme/icons/business-development.svg" alt="HireIn AI" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Digital<br> Designer</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Digital<br> Designer</a></h5>
                             <p class="text-center text-stroke-40 mt-20">56 Available Vacancy</p>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                             <div class="text-center">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure><img src="assets/imgs/theme/icons/proof-reading.svg" alt="HireIn AI" /></figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Market <br>Research</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Market <br>Research</a></h5>
                             <p class="text-center text-stroke-40 mt-20">168 Available Vacancy</p>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="card-grid hover-up wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
                             <div class="text-center card-img">
-                                <a href="job-grid.html">
+                                <a href="/jobs">
                                     <figure>
                                         <img src="assets/imgs/theme/icons/testing.svg" alt="HireIn AI" />
                                     </figure>
                                 </a>
                             </div>
-                            <h5 class="text-center mt-20 card-heading"><a href="job-grid.html">Human<br> Resource</a></h5>
+                            <h5 class="text-center mt-20 card-heading"><a href="/jobs">Human<br> Resource</a></h5>
                             <p class="text-center text-stroke-40 mt-20">628 Available Vacancy</p>
                         </div>
                     </div>
@@ -658,7 +685,7 @@
                             </div>
                             <p class="text-center mt-30 text-stroke-40">Jobs are waiting for you</p>
                             <div class="text-center mt-30">
-                                <div class="box-button-shadow"><a href="job-grid.html" class="btn btn-default">Explore more</a></div>
+                                <div class="box-button-shadow"><a href="/jobs" class="btn btn-default">Explore more</a></div>
                             </div>
                         </div>
                     </div>
@@ -685,7 +712,7 @@
                     </div>
                 </div>
                 <div class="mt-70">
-                    <div class="tab-content" id="myTabContent-1">
+                    <div class="tab-content" id="myTabContent-1" data-home-recent-jobs>
                         <div class="tab-pane fade show active" id="tab-one-1" role="tabpanel" aria-labelledby="tab-one-1">
                             <div class="row">
                                 <div class="col-lg-4 col-md-6">

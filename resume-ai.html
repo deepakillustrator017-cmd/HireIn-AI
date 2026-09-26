@@ -1,129 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HireIn AI | Resume Builder</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-body{background:#F7F5FF;color:#111827}
-.container{max-width:1100px;margin:auto;padding:40px 20px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
-.logo{font-size:30px;font-weight:800;color:#6C3EF4}
-.back{text-decoration:none;color:#6C3EF4;font-weight:600}
-.hero{text-align:center;margin-bottom:40px}
-.hero h1{font-size:44px;margin-bottom:12px}
-.hero p{color:#6B7280}
-.upload{background:#fff;border:2px dashed #8B5CF6;border-radius:24px;padding:50px;text-align:center;cursor:pointer}
-.upload:hover{background:#FCFBFF}
-input[type=file]{display:none}
-.btn{display:inline-block;background:#6C3EF4;color:#fff;padding:14px 28px;border-radius:12px;font-weight:700;border:none;cursor:pointer;margin-top:18px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:30px}
-.card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.05)}
-.score{width:170px;height:170px;border-radius:50%;background:conic-gradient(#6C3EF4 338deg,#E9DFFF 0);display:flex;align-items:center;justify-content:center;margin:20px auto}
-.score-inner{width:130px;height:130px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.tag{display:inline-block;background:#F3E8FF;color:#6C3EF4;padding:8px 12px;border-radius:999px;margin:6px;font-size:13px;font-weight:600}
-ul{padding-left:18px;line-height:2}
-.action{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap}
-.secondary{background:#E9DFFF;color:#6C3EF4}
-@media(max-width:768px){
-.grid{grid-template-columns:1fr}
-.hero h1{font-size:34px}
-}
-</style>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#6C3EF4">
+  <meta name="description" content="Create, improve and download an ATS-friendly resume with HireIn AI.">
+  <title>AI Resume Builder | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+  <script defer src="assets/js/supabase-client.js"></script><script defer src="assets/js/ai-service.js"></script><script defer src="assets/js/resume-builder.js"></script>
 </head>
-
 <body>
-
-<div class="container">
-
-<header>
-<div class="logo">HireIn AI</div>
-<a class="back" href="dashboard.html">← Dashboard</a>
-</header>
-
-<div class="hero">
-<h1>AI Resume Builder</h1>
-<p>Upload your resume and receive an instant ATS score with AI recommendations.</p>
-</div>
-
-<label class="upload">
-<input type="file" id="resume" accept=".pdf,.doc,.docx" onchange="previewFile()">
-<h2>📄 Drag & Drop Resume</h2>
-<p style="margin-top:10px;color:#6B7280;">PDF, DOC or DOCX (Max 5MB)</p>
-<div id="fileName" style="margin-top:18px;font-weight:600;color:#6C3EF4;">No file selected</div>
-<button class="btn" type="button" onclick="document.getElementById('resume').click()">Choose Resume</button>
-</label>
-
-<div class="grid">
-
-<div class="card">
-<h2>ATS Score</h2>
-
-<div class="score">
-<div class="score-inner">
-<h1 style="color:#6C3EF4;font-size:38px;">94%</h1>
-<small>Excellent</small>
-</div>
-</div>
-
-<p style="text-align:center;color:#6B7280;">Your resume is optimized for Graphic Designer roles.</p>
-</div>
-
-<div class="card">
-<h2>Skills Detected</h2>
-
-<div style="margin-top:16px;">
-<span class="tag">Photoshop</span>
-<span class="tag">Illustrator</span>
-<span class="tag">Figma</span>
-<span class="tag">Brand Identity</span>
-<span class="tag">Social Media</span>
-</div>
-
-<hr style="margin:24px 0;">
-
-<h2>Missing Keywords</h2>
-
-<div style="margin-top:16px;">
-<span class="tag">After Effects</span>
-<span class="tag">Motion Design</span>
-<span class="tag">UI Systems</span>
-</div>
-</div>
-
-</div>
-
-<div class="card" style="margin-top:30px;">
-
-<h2>AI Resume Suggestions</h2>
-
-<ul style="margin-top:18px;">
-<li>Add measurable achievements (Ex: Increased engagement by 42%)</li>
-<li>Include ATS keywords from job descriptions</li>
-<li>Add Motion Graphics as a secondary skill</li>
-<li>Optimize your professional summary</li>
-<li>Keep resume to 1–2 pages</li>
-</ul>
-
-<div class="action">
-<button class="btn" onclick="alert('AI Resume Generated!')">Generate AI Resume</button>
-<button class="btn secondary" onclick="alert('Resume PDF Download Ready!')">Download PDF</button>
-</div>
-
-</div>
-
-</div>
-
-<script>
-function previewFile(){
-const file=document.getElementById("resume").files[0];
-if(file){
-document.getElementById("fileName").innerText=file.name;
-}
-}
-</script>
-
+<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="/">HireIn AI</a><nav class="site-menu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs">Jobs</a><a href="/resume-ai.html" aria-current="page">AI Resume</a><a href="/dashboard">Dashboard</a><a href="/recruiter">Recruiter</a></nav><a class="site-signin" href="/login">Login</a></div></header>
+<main class="page-shell resume-builder-page">
+  <section class="page-heading"><div><h1>AI Resume Builder</h1><p>Create an ATS-friendly resume, improve your writing, and save a print-ready PDF to your dashboard.</p></div></section>
+  <p id="resumeMessage" class="notice" role="status" aria-live="polite"></p>
+  <div class="resume-builder-layout">
+    <section class="panel resume-editor" aria-labelledby="resumeEditorHeading">
+      <h2 id="resumeEditorHeading">Your details</h2>
+      <form id="resumeForm">
+        <div class="field"><label for="resumeName">Resume name</label><input id="resumeName" name="resume_name" maxlength="120" value="My HireIn AI resume" required></div>
+        <div class="field"><label for="resumeTemplate">Template</label><select id="resumeTemplate" name="template"><option value="modern">Modern</option><option value="minimal">Minimal</option><option value="executive">Executive</option><option value="creative">Creative</option></select></div>
+        <section class="resume-form-section"><h3>Personal</h3><div class="form-grid">
+          <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254"></div>
+          <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+          <div class="field"><label for="location">Location</label><input id="location" name="location" autocomplete="address-level2" maxlength="120"></div>
+          <div class="field"><label for="portfolio">Portfolio</label><input id="portfolio" name="portfolio" type="url" placeholder="https://" maxlength="500"></div>
+          <div class="field"><label for="linkedin">LinkedIn</label><input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." maxlength="500"></div>
+        </div></section>
+        <section class="resume-form-section"><h3>Summary</h3><div class="field"><label for="summary">Professional summary</label><textarea id="summary" name="summary" rows="5" maxlength="2500"></textarea><button class="small-button ai-action" type="button" data-ai="generateSummary" data-target="summary">Write with AI</button></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Experience</h3><button type="button" class="small-button secondary-button" data-add="experienceList" data-kind="experience">Add role</button></div><div id="experienceList"></div><button type="button" class="small-button ai-action" data-ai="improveExperience" data-target="experienceList">Improve bullets with AI</button></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Projects</h3><button type="button" class="small-button secondary-button" data-add="projectList" data-kind="project">Add project</button></div><div id="projectList"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Education</h3><button type="button" class="small-button secondary-button" data-add="educationList" data-kind="education">Add education</button></div><div id="educationList"></div></section>
+        <section class="resume-form-section"><h3>Skills</h3><div class="field"><label for="skills">Skills (separate with commas)</label><textarea id="skills" name="skills" rows="3" maxlength="1500"></textarea><button class="small-button ai-action" type="button" data-ai="suggestSkills" data-target="skills">Suggest skills with AI</button></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Certificates</h3><button type="button" class="small-button secondary-button" data-add="certificateList" data-kind="certificate">Add certificate</button></div><div id="certificateList"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Languages</h3><button type="button" class="small-button secondary-button" data-add="languageList" data-kind="language">Add language</button></div><div id="languageList"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Links</h3><button type="button" class="small-button secondary-button" data-add="linkList" data-kind="link">Add link</button></div><div id="linkList"></div></section>
+        <div class="form-actions"><button id="downloadResume" type="button">Generate PDF & Save</button><button id="printResume" type="button" class="save-job">Print preview</button></div>
+      </form>
+    </section>
+    <aside class="resume-preview-wrap" aria-label="Resume preview"><div class="resume-preview-label">Live preview</div><article id="resumePreview" class="resume-sheet template-modern"></article></aside>
+  </div>
+</main>
 </body>
 </html>

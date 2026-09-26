@@ -3,6 +3,30 @@ document.addEventListener("DOMContentLoaded",function(){
   var api=window.hireInAI,client=api.client;
   var loginForm=document.getElementById("loginForm");
   var signupForm=document.getElementById("signupForm");
+  var googleButton=document.getElementById("googleLogin");
+  var forgotForm=document.getElementById("forgotForm");
+  var resetForm=document.getElementById("resetForm");
+  if(googleButton)googleButton.addEventListener("click",async function(){
+    googleButton.disabled=true;api.showMessage(document.getElementById("authMessage"),"Redirecting to Googleâ€¦","");
+    var result=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dashboard"}});
+    if(result.error){api.showMessage(document.getElementById("authMessage"),result.error.message,"error");googleButton.disabled=false;}
+  });
+  if(forgotForm)forgotForm.addEventListener("submit",async function(event){
+    event.preventDefault();var email=String(new FormData(forgotForm).get("email")).trim(),button=forgotForm.querySelector("button[type=submit]");
+    button.disabled=true;api.showMessage(document.getElementById("authMessage"),"Sending password reset emailâ€¦","");
+    var result=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/reset-password"});
+    button.disabled=false;if(result.error){api.showMessage(document.getElementById("authMessage"),result.error.message,"error");return;}
+    api.showMessage(document.getElementById("authMessage"),"If an account exists for that address, a password reset link is on its way.","success");
+  });
+  if(resetForm)resetForm.addEventListener("submit",async function(event){
+    event.preventDefault();var values=new FormData(resetForm),password=String(values.get("password")),confirmPassword=String(values.get("confirm_password")),button=resetForm.querySelector("button[type=submit]");
+    if(password.length<8){api.showMessage(document.getElementById("authMessage"),"Use a password with at least 8 characters.","error");return;}
+    if(password!==confirmPassword){api.showMessage(document.getElementById("authMessage"),"Passwords do not match.","error");return;}
+    button.disabled=true;api.showMessage(document.getElementById("authMessage"),"Updating passwordâ€¦","");
+    var result=await client.auth.updateUser({password:password});button.disabled=false;
+    if(result.error){api.showMessage(document.getElementById("authMessage"),result.error.message,"error");return;}
+    api.showMessage(document.getElementById("authMessage"),"Password updated. You can now sign in.","success");resetForm.reset();
+  });
   if(loginForm)loginForm.addEventListener("submit",async function(event){
     event.preventDefault();
     var button=loginForm.querySelector("button[type=submit]"),notice=document.getElementById("authMessage"),values=new FormData(loginForm);
