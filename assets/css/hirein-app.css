@@ -302,6 +302,12 @@ body:where(:not(.hirein-home)) main a:not(.small-button):not(.btn):not(.site-sig
 .badge-interview{background:#eff8ff;color:#175cd3}
 .badge-hired{background:#ecfdf3;color:#067647}
 .badge-rejected{background:#fef3f2;color:#b42318}
+.badge-external{background:#eff8ff;color:#175cd3;border:1px solid #b2ddff}
+.badge-internal{background:#f4f3ff;color:#5925dc;border:1px solid #d9d6fe}
+.card-apply-badge{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;line-height:1.2;display:inline-flex;align-items:center;gap:4px}
+.external-apply-notice{margin-top:14px;color:var(--hirein-muted);font-size:13px;display:flex;align-items:center;gap:8px}
+.external-apply-notice svg{flex-shrink:0;color:#175cd3}
+@media(max-width:400px){.card-apply-badge{font-size:10px;padding:2px 7px}}
 .action-buttons{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .small-button.success-btn{background:#10b981!important;color:#fff!important}
 .small-button.success-btn:hover{background:#059669!important}

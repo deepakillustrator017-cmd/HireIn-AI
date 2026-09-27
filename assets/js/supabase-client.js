@@ -194,12 +194,19 @@
       var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
       var domain=extractDomain(job.website || job.source_url, company);
       var logoSrc=jobs.logo(job);
-      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' referrerpolicy='no-referrer' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(logoSrc)+"' data-company='"+escapeHtml(company)+"' data-domain='"+escapeHtml(domain)+"' onerror='window.hireInAI.handleLogoError(this)'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
+      var isExternal=(job.apply_type||"external")==="external";
+      var badgeHtml=isExternal
+        ? "<span class='badge badge-external card-apply-badge' title='Direct apply on employer career site'>🌐 External Apply</span>"
+        : "<span class='badge badge-internal card-apply-badge' title='Apply via HireIn recruiter pipeline'>🟣 HireIn Apply</span>";
+      var ctaHtml=isExternal
+        ? "<a class='btn' href='"+escapeHtml(job.apply_url||job.source_url||href)+"' target='_blank' rel='noopener noreferrer' data-apply-click='"+escapeHtml(job.id)+"' data-apply-type='external'>"+escapeHtml(job.apply_label||"Apply on Company Website")+"</a>"
+        : "<a class='btn' href='/apply.html?job="+encodeURIComponent(job.id)+"'>Apply on HireIn</a>";
+      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' referrerpolicy='no-referrer' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(logoSrc)+"' data-company='"+escapeHtml(company)+"' data-domain='"+escapeHtml(domain)+"' onerror='window.hireInAI.handleLogoError(this)'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div>"+badgeHtml+"</div>"+
         "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
         "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
         (options.summary===false?"":"<p class='job-summary'>"+escapeHtml(String(job.description||"").slice(0,160))+"</p>")+
         (skills.length?"<div class='job-tags'>"+skills.slice(0,4).map(function(s){return "<span>"+escapeHtml(s)+"</span>";}).join("")+"</div>":"")+
-        "<div class='salary'>"+escapeHtml(job.salary||"Salary not listed")+"</div><div class='footer'><span class='date'>"+(posted?"Posted "+escapeHtml(new Date(posted).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})):"Recently posted")+"</span><div>"+save+"<a class='btn' href='"+href+"'>View</a></div></div></article>";
+        "<div class='salary'>"+escapeHtml(job.salary||"Salary not listed")+"</div><div class='footer'><span class='date'>"+(posted?"Posted "+escapeHtml(new Date(posted).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})):"Recently posted")+"</span><div>"+save+ctaHtml+"</div></div></article>";
     },
     listPublished:async function(columns,limit){
       var query=client.from("jobs").select(columns||"*").in("status",["published","active"]).order("posted_at",{ascending:false});
@@ -212,6 +219,29 @@
       if(r.error&&!(save&&r.error.code==="23505"))throw new Error(r.error.message);
     }
   };
+  var recordApplyClick=async function(jobId,applyType){
+    if(!jobId)return;
+    try{
+      var sessionRes=await client.auth.getSession();
+      var session=sessionRes&&sessionRes.data&&sessionRes.data.session;
+      var userId=session&&session.user?session.user.id:null;
+      return await client.from("apply_clicks").insert({
+        job_id:Number(jobId),
+        user_id:userId,
+        apply_type:applyType||"external"
+      });
+    }catch(err){
+      console.warn("Could not record apply click:",err);
+    }
+  };
+  document.addEventListener("click",function(e){
+    var target=e.target&&e.target.closest&&e.target.closest("[data-apply-click]");
+    if(target){
+      var jobId=target.getAttribute("data-apply-click");
+      var applyType=target.getAttribute("data-apply-type")||"external";
+      if(jobId)recordApplyClick(jobId,applyType);
+    }
+  });
   window.hireInAI={
     client:client,
     escapeHtml:escapeHtml,
@@ -224,6 +254,7 @@
     monogram:generateMonogramSvg,
     extractDomain:extractDomain,
     handleLogoError:handleLogoError,
+    recordApplyClick:recordApplyClick,
     error:null
   };
   // Header account link: "Sign In" for visitors, "Dashboard" once signed in.

@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded",async function(){
+document.addEventListener("DOMContentLoaded",async function(){
   var api=window.hireInAI,client=api&&api.client;if(!client)return;
   var notice=document.getElementById("dashboardMessage"),auth=await client.auth.getUser(),user=auth.data&&auth.data.user;
   if(!user){location.href="login.html?next=dashboard.html";return;}
@@ -9,11 +9,50 @@
   if(profileData.error&&(profileData.error.code==="PGRST204"||profileData.error.code==="42703"||/phone.*column|column.*phone/i.test(profileData.error.message||""))){hasPhone=false;profileData=await client.from("profiles").select("full_name").eq("user_id",user.id).maybeSingle();}
   if(profileData.data){profileForm.elements.full_name.value=profileData.data.full_name||"";profileForm.elements.phone.value=profileData.data.phone||"";}
   profileForm.addEventListener("submit",async function(event){event.preventDefault();var values=new FormData(profileForm),changes={full_name:String(values.get("full_name")).trim()};if(hasPhone)changes.phone=String(values.get("phone")).trim()||null;var save=await client.from("profiles").update(changes).eq("user_id",user.id);if(save.error){api.showMessage(notice,"Could not save profile: "+save.error.message,"error");return;}document.getElementById("userName").textContent=String(values.get("full_name")).trim()||user.email;api.showMessage(notice,"Profile saved.","success");});
-  var appRes=await client.from("applications").select("id,status,applied_at,resume_url,jobs!applications_job_id_fkey(title,company)").eq("user_id",user.id).order("id",{ascending:false});
+  var appRes=await client.from("applications").select("id,job_id,status,applied_at,resume_url,jobs!applications_job_id_fkey(id,title,company)").eq("user_id",user.id).order("id",{ascending:false});
   if(appRes.error)api.showMessage(notice,"Could not load applications: "+appRes.error.message,"error");
-  var apps=appRes.data||[],applicationPaths=new Set(apps.map(function(item){return item.resume_url;}).filter(Boolean));
-  document.getElementById("applicationCount").textContent=apps.length;
-  document.getElementById("applicationList").innerHTML=apps.length?apps.map(function(item){return "<tr><td>"+api.escapeHtml(item.jobs&&item.jobs.title||"Job")+"</td><td>"+api.escapeHtml(item.jobs&&item.jobs.company||"-")+"</td><td>"+api.escapeHtml(item.status||"Applied")+"</td><td>"+api.escapeHtml(item.applied_at?new Date(item.applied_at).toLocaleDateString():"-")+"</td></tr>";}).join(""):"<tr><td colspan='4' class='empty'>No applications yet. Browse jobs to apply.</td></tr>";
+  var clickRes=await client.from("apply_clicks").select("id,job_id,apply_type,clicked_at,jobs!apply_clicks_job_id_fkey(id,title,company)").eq("user_id",user.id).eq("apply_type","external").order("clicked_at",{ascending:false});
+  var internalApps=(appRes.data||[]).map(function(item){
+    return {
+      id:"int-"+item.id,
+      jobId:item.job_id||(item.jobs&&item.jobs.id),
+      title:item.jobs&&item.jobs.title||"Job",
+      company:item.jobs&&item.jobs.company||"-",
+      status:item.status||"Applied",
+      isExternal:false,
+      date:item.applied_at,
+      resumeUrl:item.resume_url
+    };
+  });
+  var seenClickJobs=new Set(),externalApps=[];
+  (clickRes.data||[]).forEach(function(item){
+    if(!item.job_id||seenClickJobs.has(Number(item.job_id)))return;
+    seenClickJobs.add(Number(item.job_id));
+    externalApps.push({
+      id:"ext-"+item.id,
+      jobId:item.job_id,
+      title:item.jobs&&item.jobs.title||"Job",
+      company:item.jobs&&item.jobs.company||"-",
+      status:"Applied on Company Website",
+      isExternal:true,
+      date:item.clicked_at,
+      resumeUrl:null
+    });
+  });
+  var allApps=internalApps.concat(externalApps).sort(function(a,b){
+    return new Date(b.date||0).getTime()-new Date(a.date||0).getTime();
+  });
+  var applicationPaths=new Set(internalApps.map(function(item){return item.resumeUrl;}).filter(Boolean));
+  document.getElementById("applicationCount").textContent=allApps.length;
+  document.getElementById("applicationList").innerHTML=allApps.length?allApps.map(function(item){
+    var statusBadge=item.isExternal
+      ? "<span class='badge badge-external'>🌐 Applied on Company Website</span>"
+      : "<span class='badge badge-"+(item.status||"applied").toLowerCase()+"'>"+api.escapeHtml(item.status||"Applied")+"</span>";
+    var jobLink=item.jobId
+      ? "<a href='/job-single.html?id="+encodeURIComponent(item.jobId)+"'>"+api.escapeHtml(item.title)+"</a>"
+      : api.escapeHtml(item.title);
+    return "<tr><td>"+jobLink+"</td><td>"+api.escapeHtml(item.company)+"</td><td>"+statusBadge+"</td><td>"+api.escapeHtml(item.date?new Date(item.date).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"-")+"</td></tr>";
+  }).join(""):"<tr><td colspan='4' class='empty'>No applications yet. Browse jobs to apply.</td></tr>";
   var savedRes=await client.from("saved_jobs").select("id,job_id,jobs!saved_jobs_job_id_fkey(title,company,location)").eq("user_id",user.id).order("id",{ascending:false});
   var saved=savedRes.data||[];document.getElementById("savedCount").textContent=saved.length;
   document.getElementById("savedList").innerHTML=savedRes.error?"<tr><td colspan='3' class='empty'>"+api.escapeHtml(savedRes.error.message)+"</td></tr>":saved.length?saved.map(function(item){var job=item.jobs||{};return "<tr><td><a href='job-single.html?id="+encodeURIComponent(item.job_id)+"'>"+api.escapeHtml(job.title||"Job")+"</a></td><td>"+api.escapeHtml(job.company||"-")+"</td><td><button class='small-button danger' data-unsave='"+Number(item.id)+"'>Remove</button></td></tr>";}).join(""):"<tr><td colspan='3' class='empty'>No saved jobs yet.</td></tr>";

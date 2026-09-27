@@ -77,11 +77,37 @@
       document.getElementById("skillsSection").hidden = !skills.length;
       document.getElementById("jobSkills").innerHTML = skills.map(function (skill) { return "<span>" + escape(skill) + "</span>"; }).join("");
       var mode = J.mode(job);
-      var metadata = [job.location || "Remote", mode, J.levelLabel(J.level(job)) || job.experience, J.type(job), job.posted_at ? "Posted " + new Date(job.posted_at).toLocaleDateString("en-IN") : "Recently posted"].filter(Boolean);
-      document.getElementById("jobMeta").innerHTML = metadata.map(function (value) { return "<span>" + escape(value) + "</span>"; }).join("");
+      var isExternal = (job.apply_type || "external") === "external";
+      var applyBadge = isExternal
+        ? "<span class='badge badge-external'>🌐 External Apply</span>"
+        : "<span class='badge badge-internal'>🟣 HireIn Apply</span>";
+      var metadata = [job.location || "Remote", mode, J.levelLabel(J.level(job)) || job.experience, J.type(job), job.posted_at ? "Posted " + new Date(job.posted_at).toLocaleDateString("en-IN") : "Recently posted", applyBadge].filter(Boolean);
+      document.getElementById("jobMeta").innerHTML = metadata.map(function (value) {
+        if (/^<span class=['"]badge/.test(value)) return value;
+        return "<span>" + escape(value) + "</span>";
+      }).join("");
       setText("jobSalary", job.salary || "Salary not listed");
       setText("companyInfo", [company.description || ((job.company || company.name || "The employer") + " is hiring through HireIn AI."), company.website && "Website: " + company.website, company.location && "Location: " + company.location].filter(Boolean).join("\n"));
-      document.getElementById("applyNow").href = "/apply.html?id=" + encodeURIComponent(job.id);
+      var applyBtn = document.getElementById("applyNow");
+      var applyNotice = document.getElementById("externalApplyNotice");
+      if (isExternal) {
+        var externalUrl = job.apply_url || job.source_url || ("https://www.google.com/search?q=" + encodeURIComponent((job.company || "company") + " " + (job.title || "jobs") + " careers"));
+        applyBtn.innerHTML = escape(job.apply_label || "Apply on Company Website") + " <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-left:4px'><path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'></path><polyline points='15 3 21 3 21 9'></polyline><line x1='10' y1='14' x2='21' y2='3'></line></svg>";
+        applyBtn.href = externalUrl;
+        applyBtn.target = "_blank";
+        applyBtn.rel = "noopener noreferrer";
+        applyBtn.setAttribute("data-apply-click", String(job.id));
+        applyBtn.setAttribute("data-apply-type", "external");
+        if (applyNotice) applyNotice.hidden = false;
+      } else {
+        applyBtn.textContent = "Apply on HireIn";
+        applyBtn.href = "/apply.html?job=" + encodeURIComponent(job.id);
+        applyBtn.removeAttribute("target");
+        applyBtn.removeAttribute("rel");
+        applyBtn.removeAttribute("data-apply-click");
+        applyBtn.removeAttribute("data-apply-type");
+        if (applyNotice) applyNotice.hidden = true;
+      }
       var pageTitle = (job.title || "Job details") + " at " + (job.company || company.name || "HireIn AI") + " | HireIn AI";
       var pageDesc = String(job.description || "Apply to " + job.title + " at " + (job.company || "HireIn AI") + " on HireIn AI.").slice(0, 160);
       var jobUrl = "https://hireinai.in/job/" + encodeURIComponent(job.id);

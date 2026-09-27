@@ -2,15 +2,28 @@ document.addEventListener("DOMContentLoaded",async function(){
   var api=window.hireInAI, form=document.getElementById("applicationForm");
   if(!api||!api.client||!form)return;
   var client=api.client,notice=document.getElementById("status"),submit=document.getElementById("submitButton");
-  var jobId=new URLSearchParams(location.search).get("id"),jobTitle=document.getElementById("jobTitle");
+  var params=new URLSearchParams(location.search);
+  var jobId=params.get("job")||params.get("id"),jobTitle=document.getElementById("jobTitle");
   var user=null;
   var auth=await client.auth.getUser(); user=auth.data&&auth.data.user;
   var login=document.getElementById("loginLink");
-  if(!user){if(login){login.href="login.html?next="+encodeURIComponent("apply.html?id="+(jobId||""));login.hidden=false;}api.showMessage(notice,"Sign in or create a candidate account before applying.","error");submit.disabled=true;return;}
+  if(!user){if(login){login.href="login.html?next="+encodeURIComponent("apply.html?job="+(jobId||""));login.hidden=false;}api.showMessage(notice,"Sign in or create a candidate account before applying.","error");submit.disabled=true;return;}
   if(!jobId||!/^\d+$/.test(jobId)){jobTitle.textContent="Invalid job link";api.showMessage(notice,"Open this page from a job listing.","error");return;}
-  var found=await client.from("jobs").select("id,title,company").eq("id",jobId).maybeSingle();
+  var found=await client.from("jobs").select("id,title,company,apply_type,apply_url,source_url").eq("id",jobId).maybeSingle();
   if(found.error||!found.data){jobTitle.textContent="Job unavailable";api.showMessage(notice,found.error?found.error.message:"This job may have closed.","error");return;}
   jobTitle.textContent=found.data.title+(found.data.company?" · "+found.data.company:"");
+  if((found.data.apply_type || "external") === "external"){
+    var extUrl=found.data.apply_url||found.data.source_url;
+    api.showMessage(notice,"This role accepts applications directly on the employer's official careers site. Click below to apply securely.","notice");
+    if(submit){
+      submit.textContent="Apply on Company Website ↗";
+      submit.onclick=function(e){
+        e.preventDefault();
+        if(api.recordApplyClick) api.recordApplyClick(jobId,"external");
+        window.open(extUrl,"_blank","noopener,noreferrer");
+      };
+    }
+  }
   var profile=await api.getProfile(user.id);
   if(profile.data&&profile.data.full_name)form.elements.full_name.value=profile.data.full_name;
   if(user.email)form.elements.email.value=user.email;

@@ -3,6 +3,10 @@
 -- Verified real companies with active presence in Tamil Nadu.
 
 alter table public.jobs add column if not exists source_url text;
+alter table public.jobs add column if not exists apply_type text default 'external' check (apply_type in ('external', 'internal'));
+alter table public.jobs add column if not exists apply_url text;
+alter table public.jobs add column if not exists apply_label text default 'Apply on Company Website';
+alter table public.jobs add column if not exists state text;
 
 insert into public.jobs (
   company_id,
@@ -1279,3 +1283,11 @@ values
     false,
     'https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg'
   );
+
+update public.jobs
+set
+  apply_type = 'external',
+  apply_label = 'Apply on Company Website',
+  apply_url = coalesce(apply_url, source_url),
+  state = 'Tamil Nadu'
+where location ilike '%Tamil Nadu%' or location ilike '%Chennai%' or location ilike '%Coimbatore%' or location ilike '%Trichy%' or location ilike '%Tiruchirappalli%';

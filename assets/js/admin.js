@@ -83,9 +83,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     var jobsRes = await client.from("jobs").select("id,title,company,company_id,status,created_by,posted_at,created_at");
     state.jobs = jobsRes.data || [];
 
-    // D. Fetch Applications
+    // D. Fetch Applications & External Apply Clicks
     var appsRes = await client.from("applications").select("id,job_id,user_id,status,applied_at");
     state.applications = appsRes.data || [];
+
+    try {
+      var clicksRes = await client.from("apply_clicks").select("id,job_id,user_id,apply_type,clicked_at");
+      state.applyClicks = clicksRes.data || [];
+    } catch (_) {
+      state.applyClicks = [];
+    }
 
     // E. Fetch ATS History
     var atsRes = await client.from("ats_history").select("id,user_id,score,created_at");
@@ -108,7 +115,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     var activeJobs = state.jobs.filter(function (j) {
       return ["published", "active"].includes(String(j.status || "").toLowerCase());
     }).length;
-    var totalApps = state.applications.length;
+    var internalApps = state.applications.length;
+    var externalClicks = state.applyClicks ? state.applyClicks.length : 0;
+    var totalApps = internalApps + externalClicks;
     var totalAts = state.atsHistory.length;
 
     var recruiterPct = totalUsers > 0 ? Math.round((recruiters / totalUsers) * 100) : 0;
@@ -137,6 +146,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     var elApps = document.getElementById("statApplications");
     if (elApps) elApps.textContent = String(totalApps);
+
+    var elAppsBreakdown = document.getElementById("statApplicationsBreakdown");
+    if (elAppsBreakdown) elAppsBreakdown.textContent = internalApps + " internal · " + externalClicks + " external";
 
     var elAts = document.getElementById("statAtsReports");
     if (elAts) elAts.textContent = String(totalAts);
