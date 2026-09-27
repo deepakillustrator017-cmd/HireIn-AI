@@ -194,13 +194,18 @@
       var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
       var domain=extractDomain(job.website || job.source_url, company);
       var logoSrc=jobs.logo(job);
-      var isExternal=(job.apply_type||"external")==="external";
-      var badgeHtml=isExternal
+      var applyType = String(job.apply_type || "").trim().toLowerCase();
+      var isExternal = applyType === "external" || (!applyType && Boolean(job.apply_url || job.source_url));
+      var badgeHtml = isExternal
         ? "<span class='badge badge-external card-apply-badge' title='Direct apply on employer career site'>🌐 External Apply</span>"
         : "<span class='badge badge-internal card-apply-badge' title='Apply via HireIn recruiter pipeline'>🟣 HireIn Apply</span>";
-      var ctaHtml=isExternal
-        ? "<a class='btn' href='"+escapeHtml(job.apply_url||job.source_url||href)+"' target='_blank' rel='noopener noreferrer' data-apply-click='"+escapeHtml(job.id)+"' data-apply-type='external'>"+escapeHtml(job.apply_label||"Apply on Company Website")+"</a>"
-        : "<a class='btn' href='/apply.html?job="+encodeURIComponent(job.id)+"'>Apply on HireIn</a>";
+      var targetUrl = job.apply_url || job.source_url || href;
+      if (isExternal && targetUrl && !/^https?:\/\//i.test(targetUrl)) {
+        targetUrl = "https://" + targetUrl;
+      }
+      var ctaHtml = isExternal
+        ? "<a class='btn' href='" + escapeHtml(targetUrl) + "' target='_blank' rel='noopener noreferrer' data-apply-click='" + escapeHtml(job.id) + "' data-apply-type='external'>" + escapeHtml(job.apply_label || "Apply on Company Website") + "</a>"
+        : "<a class='btn' href='/apply.html?job=" + encodeURIComponent(job.id) + "'>Apply on HireIn</a>";
       return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' referrerpolicy='no-referrer' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(logoSrc)+"' data-company='"+escapeHtml(company)+"' data-domain='"+escapeHtml(domain)+"' onerror='window.hireInAI.handleLogoError(this)'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div>"+badgeHtml+"</div>"+
         "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
         "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
