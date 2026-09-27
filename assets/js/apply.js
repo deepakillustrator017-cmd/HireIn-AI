@@ -20,16 +20,18 @@ document.addEventListener("DOMContentLoaded",async function(){
   var job=found.data;
   jobTitle.textContent=job.title+(job.company?" · "+job.company:"");
   // External jobs (apply_type "external", or legacy rows with an employer link) never show the HireIn form.
+  // Same routing rule as the job cards: only apply_type "internal" may show the HireIn form.
+  var route=api.jobs&&api.jobs.applyRoute?api.jobs.applyRoute(job):null;
   var applyType=String(job.apply_type||"").trim().toLowerCase();
-  var isExternal=applyType==="external"||(applyType!=="internal"&&Boolean(job.apply_url||job.source_url));
+  var isExternal=route?route.kind!=="internal":applyType!=="internal";
   if(isExternal){
-    var target=safeUrl(job.apply_url)||safeUrl(job.source_url);
+    var target=route&&route.url||safeUrl(job.apply_url)||safeUrl(job.source_url);
     if(gateLink)gateLink.href="/job-single.html?id="+encodeURIComponent(job.id);
     if(!target){if(gateLink)gateLink.textContent="Back to job details";stop("Official application link unavailable.");return;}
     gateText.textContent="Redirecting to the employer's official careers website...";
-    // Record the click, but never let analytics delay the redirect beyond ~250 ms.
+    // Record the click, but never let analytics delay the redirect beyond ~150 ms.
     var tracked=api.recordApplyClick?Promise.resolve(api.recordApplyClick(job.id,"external")).catch(function(){}):Promise.resolve();
-    await Promise.race([tracked,new Promise(function(resolve){setTimeout(resolve,250);})]);
+    await Promise.race([tracked,new Promise(function(resolve){setTimeout(resolve,150);})]);
     location.replace(target);
     return;
   }

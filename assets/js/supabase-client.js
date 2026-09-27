@@ -185,6 +185,22 @@
       return generateMonogramSvg(compName || "Company");
     },
     href:function(job){return "/job-single.html?id="+encodeURIComponent(job.id);},
+    // Only http(s) employer links are allowed; bare domains get https:// added.
+    safeUrl:function(value){
+      var url=String(value||"").trim();
+      if(!url)return "";
+      if(!/^[a-z][a-z0-9+.-]*:/i.test(url))url="https://"+url.replace(/^\/+/,"");
+      try{var parsed=new URL(url);return /^https?:$/.test(parsed.protocol)&&parsed.hostname.indexOf(".")>0?parsed.href:"";}catch(e){return "";}
+    },
+    // How a job is applied to: {kind:"external",url} | {kind:"internal"} | {kind:"unavailable"}.
+    // Only apply_type "internal" may use the HireIn form; external (or legacy rows with an employer link) never do.
+    applyRoute:function(job){
+      var type=String(job.apply_type||"").trim().toLowerCase();
+      if(type==="internal")return {kind:"internal"};
+      var url=jobs.safeUrl(job.apply_url)||jobs.safeUrl(job.source_url);
+      if(type==="external"||url)return url?{kind:"external",url:url}:{kind:"unavailable"};
+      return {kind:"unavailable"};
+    },
     // One job card used by the homepage, jobs page and related jobs so they always look the same.
     card:function(job,options){
       options=options||{};
@@ -194,18 +210,16 @@
       var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
       var domain=extractDomain(job.website || job.source_url, company);
       var logoSrc=jobs.logo(job);
-      var applyType = String(job.apply_type || "").trim().toLowerCase();
-      var isExternal = applyType === "external" || (!applyType && Boolean(job.apply_url || job.source_url));
-      var badgeHtml = isExternal
-        ? "<span class='badge badge-external card-apply-badge' title='Direct apply on employer career site'>🌐 External Apply</span>"
-        : "<span class='badge badge-internal card-apply-badge' title='Apply via HireIn recruiter pipeline'>🟣 HireIn Apply</span>";
-      var targetUrl = job.apply_url || job.source_url || href;
-      if (isExternal && targetUrl && !/^https?:\/\//i.test(targetUrl)) {
-        targetUrl = "https://" + targetUrl;
-      }
-      var ctaHtml = isExternal
-        ? "<a class='btn' href='" + escapeHtml(targetUrl) + "' target='_blank' rel='noopener noreferrer' data-apply-click='" + escapeHtml(job.id) + "' data-apply-type='external'>" + escapeHtml(job.apply_label || "Apply on Company Website") + "</a>"
-        : "<a class='btn' href='/apply.html?job=" + encodeURIComponent(job.id) + "'>Apply on HireIn</a>";
+      var route = jobs.applyRoute(job);
+      var badgeHtml = route.kind === "internal"
+        ? "<span class='badge badge-internal card-apply-badge' title='Apply via HireIn recruiter pipeline'>🟣 HireIn Apply</span>"
+        : "<span class='badge badge-external card-apply-badge' title='Direct apply on employer career site'>🌐 External Apply</span>";
+      // External jobs never link to apply.html: official careers URL, or the job page when no link exists.
+      var ctaHtml = route.kind === "external"
+        ? "<a class='btn' href='" + escapeHtml(route.url) + "' target='_blank' rel='noopener noreferrer' data-apply-click='" + escapeHtml(job.id) + "' data-apply-type='external'>" + escapeHtml(job.apply_label || "Apply on Company Website") + "</a>"
+        : route.kind === "internal"
+          ? "<a class='btn' href='/apply.html?job=" + encodeURIComponent(job.id) + "'>Apply on HireIn</a>"
+          : "<a class='btn' href='" + href + "'>View job</a>";
       return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' referrerpolicy='no-referrer' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(logoSrc)+"' data-company='"+escapeHtml(company)+"' data-domain='"+escapeHtml(domain)+"' onerror='window.hireInAI.handleLogoError(this)'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div>"+badgeHtml+"</div>"+
         "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
         "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
@@ -239,13 +253,19 @@
       console.warn("Could not record apply click:",err);
     }
   };
+  // External apply buttons: record analytics, then open the official careers page in a new tab.
+  // Modified clicks (ctrl/cmd/shift/middle) keep the browser's native link behaviour.
   document.addEventListener("click",function(e){
     var target=e.target&&e.target.closest&&e.target.closest("[data-apply-click]");
-    if(target){
-      var jobId=target.getAttribute("data-apply-click");
-      var applyType=target.getAttribute("data-apply-type")||"external";
-      if(jobId)recordApplyClick(jobId,applyType);
-    }
+    if(!target)return;
+    var jobId=target.getAttribute("data-apply-click");
+    var applyType=target.getAttribute("data-apply-type")||"external";
+    if(jobId)recordApplyClick(jobId,applyType);
+    if(applyType!=="external"||e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
+    var url=jobs.safeUrl(target.getAttribute("href"));
+    if(!url)return;
+    e.preventDefault();
+    window.open(url,"_blank","noopener,noreferrer");
   });
   window.hireInAI={
     client:client,
