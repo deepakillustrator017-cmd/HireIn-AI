@@ -134,7 +134,7 @@
       var loc=String(job.location||"").trim().replace(/\b\w/g,function(c){return c.toUpperCase();})||"Remote";
       var meta=[loc,jobs.mode(job),jobs.type(job),jobs.levelLabel(jobs.level(job))||job.experience].filter(Boolean);
       var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
-      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' alt='' src='"+escapeHtml(jobs.logo(job))+"'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
+      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(jobs.logo(job))+"'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
         "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
         "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
         (options.summary===false?"":"<p class='job-summary'>"+escapeHtml(String(job.description||"").slice(0,160))+"</p>")+

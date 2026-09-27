@@ -74,17 +74,60 @@
       setText("jobSalary", job.salary || "Salary not listed");
       setText("companyInfo", [company.description || ((job.company || company.name || "The employer") + " is hiring through HireIn AI."), company.website && "Website: " + company.website, company.location && "Location: " + company.location].filter(Boolean).join("\n"));
       document.getElementById("applyNow").href = "/apply.html?id=" + encodeURIComponent(job.id);
-      document.title = (job.title || "Job details") + " at " + (job.company || company.name || "HireIn AI") + " | HireIn AI";
-      document.querySelector("meta[name=description]").content = String(job.description || "Apply to " + job.title + " at " + job.company + " on HireIn AI.").slice(0, 160);
+      var pageTitle = (job.title || "Job details") + " at " + (job.company || company.name || "HireIn AI") + " | HireIn AI";
+      var pageDesc = String(job.description || "Apply to " + job.title + " at " + (job.company || "HireIn AI") + " on HireIn AI.").slice(0, 160);
+      var jobUrl = "https://hireinai.in/job/" + encodeURIComponent(job.id);
+      document.title = pageTitle;
+      var metaDesc = document.querySelector("meta[name=description]");
+      if (metaDesc) metaDesc.content = pageDesc;
+      var canonEl = document.getElementById("jobCanonical");
+      if (canonEl) canonEl.href = jobUrl;
+      var ogTitle = document.getElementById("ogTitle"), ogDesc = document.getElementById("ogDescription"), ogUrl = document.getElementById("ogUrl");
+      if (ogTitle) ogTitle.content = pageTitle;
+      if (ogDesc) ogDesc.content = pageDesc;
+      if (ogUrl) ogUrl.content = jobUrl;
+      var twTitle = document.getElementById("twTitle"), twDesc = document.getElementById("twDescription");
+      if (twTitle) twTitle.content = pageTitle;
+      if (twDesc) twDesc.content = pageDesc;
+
       document.getElementById("jobPostingSchema").textContent = JSON.stringify({
-        "@context": "https://schema.org", "@type": "JobPosting", title: job.title,
-        description: job.description, datePosted: job.posted_at || job.created_at,
-        validThrough: job.expires_at || undefined, employmentType: J.type(job).toUpperCase().replace(/\s+/g, "_"),
-        hiringOrganization: { "@type": "Organization", name: job.company || company.name || "Employer", sameAs: company.website || undefined, logo: company.logo_url || undefined },
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: job.title,
+        description: job.description,
+        datePosted: job.posted_at || job.created_at,
+        validThrough: job.expires_at || undefined,
+        employmentType: J.type(job).toUpperCase().replace(/\s+/g, "_"),
+        url: jobUrl,
+        directApply: true,
+        industry: J.category(job) || undefined,
+        skills: skills.length ? skills.join(", ") : undefined,
+        hiringOrganization: {
+          "@type": "Organization",
+          name: job.company || company.name || "Employer",
+          sameAs: company.website || undefined,
+          logo: company.logo_url || undefined
+        },
         jobLocationType: mode === "Remote" ? "TELECOMMUTE" : undefined,
         applicantLocationRequirements: mode === "Remote" ? { "@type": "Country", name: "India" } : undefined,
-        jobLocation: mode === "Remote" ? undefined : { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.location || undefined, addressCountry: "IN" } },
-        baseSalary: job.salary_min ? { "@type": "MonetaryAmount", currency: job.currency || "INR", value: { "@type": "QuantitativeValue", minValue: job.salary_min, maxValue: job.salary_max || undefined, unitText: "YEAR" } } : undefined
+        jobLocation: mode === "Remote" ? undefined : {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: job.location || undefined,
+            addressCountry: "IN"
+          }
+        },
+        baseSalary: job.salary_min ? {
+          "@type": "MonetaryAmount",
+          currency: job.currency || "INR",
+          value: {
+            "@type": "QuantitativeValue",
+            minValue: job.salary_min,
+            maxValue: job.salary_max || undefined,
+            unitText: "YEAR"
+          }
+        } : undefined
       });
       content.hidden = false;
       api.showMessage(notice, "", "");

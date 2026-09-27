@@ -1,14 +1,38 @@
+# HireIn AI - Robots.txt
 User-agent: *
 Allow: /
-Disallow: /dashboard
-Disallow: /recruiter
+Allow: /jobs
+Allow: /jobs.html
+Allow: /job/
+Allow: /job-single.html
+Allow: /resume-ai.html
+Allow: /resume
+Allow: /ats
+Allow: /ats.html
+Allow: /page-about.html
+Allow: /page-contact.html
+Allow: /assets/
+Allow: /sitemap.xml
+
+# Protected / Authenticated areas
+Disallow: /admin
 Disallow: /admin.html
+Disallow: /recruiter
+Disallow: /recruiters
+Disallow: /recruiters.html
+Disallow: /dashboard
+Disallow: /dashboard.html
 Disallow: /applicants.html
 Disallow: /post-job.html
 Disallow: /apply
 Disallow: /apply.html
 Disallow: /login
+Disallow: /login.html
 Disallow: /signup
+Disallow: /signup.html
 Disallow: /forgot-password
+Disallow: /forgot-password.html
 Disallow: /reset-password
+Disallow: /reset-password.html
+
 Sitemap: https://hireinai.in/sitemap.xml

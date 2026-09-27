@@ -4,7 +4,7 @@
   var FILTERS = { q: "search", category: "filterCategory", location: "filterLocation", experience: "filterExperience", salary: "filterSalary", mode: "filterMode", type: "filterType", company: "filterCompany", sort: "sortJobs" };
 
   function emptyState(title, text, action) {
-    return "<div class='empty-state'><img src='/assets/imgs/theme/icons/icon-job.svg' alt=''><h3>" + title + "</h3><p>" + text + "</p>" + (action || "") + "</div>";
+    return "<div class='empty-state'><img src='/assets/imgs/theme/icons/icon-job.svg' alt='' width='48' height='48' loading='lazy' decoding='async'><h3>" + title + "</h3><p>" + text + "</p>" + (action || "") + "</div>";
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -82,6 +82,11 @@
       else grid.innerHTML = emptyState("New roles are on the way", "Hiring teams are preparing their next openings. Build an ATS-friendly resume now so you're ready to apply.", "<a class='small-button' href='/resume-ai.html'>Build your resume</a>");
       drawPagination(pages);
       syncUrl();
+      var qVal = value("q"), catVal = value("category");
+      if (qVal && catVal) { document.title = qVal + " (" + catVal + ") Jobs | HireIn AI"; }
+      else if (qVal) { document.title = qVal + " Jobs | HireIn AI"; }
+      else if (catVal) { document.title = catVal + " Jobs | HireIn AI"; }
+      else { document.title = "Browse Jobs & Opportunities | HireIn AI"; }
     }
     function prepare(job) {
       job._category = J.category(job); job._mode = J.mode(job); job._type = J.type(job); job._level = J.level(job); job._salary = J.salary(job);

@@ -3,21 +3,66 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>HireIn AI | Find Your Dream Job</title>
-    <meta name="description" content="Find your next role with HireIn AI. Explore verified opportunities and build an ATS-friendly resume with AI." />
+    <title>HireIn AI | AI-Powered Career Platform & Job Search</title>
+    <meta name="description" content="Find your next role with HireIn AI. Explore verified opportunities, analyze resumes with AI, and score ATS compatibility." />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#6C3EF4" />
     <link rel="canonical" href="https://hireinai.in/" />
-    <meta property="og:title" content="HireIn AI | Find Your Dream Job" />
-    <meta property="og:description" content="Find your next role and build an ATS-friendly resume with HireIn AI." />
+    <meta property="og:site_name" content="HireIn AI" />
+    <meta property="og:title" content="HireIn AI | AI-Powered Career Platform & Job Search" />
+    <meta property="og:description" content="Find your next role with HireIn AI. Explore verified opportunities and build an ATS-friendly resume with AI." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hireinai.in/" />
     <meta property="og:image" content="https://hireinai.in/assets/imgs/banner/banner.png" />
+    <meta property="og:locale" content="en_IN" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="HireIn AI | Find Your Dream Job" />
-    <meta name="twitter:description" content="Find your next role and build an ATS-friendly resume with HireIn AI." />
+    <meta name="twitter:site" content="@HireInAI" />
+    <meta name="twitter:title" content="HireIn AI | AI-Powered Career Platform & Job Search" />
+    <meta name="twitter:description" content="Find your next role with HireIn AI. Explore verified opportunities and build an ATS-friendly resume with AI." />
     <meta name="twitter:image" content="https://hireinai.in/assets/imgs/banner/banner.png" />
-    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="assets/imgs/theme/favicon.svg" />
+    <link rel="alternate icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg" />
+    <link rel="apple-touch-icon" href="assets/imgs/theme/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://hireinai.in/#organization",
+          "name": "HireIn AI",
+          "url": "https://hireinai.in/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://hireinai.in/assets/imgs/theme/favicon.svg"
+          },
+          "description": "AI-powered hiring and career platform. Explore live jobs, generate ATS-compliant resumes, and track job applications.",
+          "sameAs": [
+            "https://twitter.com/HireInAI",
+            "https://linkedin.com/company/hirein-ai"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://hireinai.in/#website",
+          "url": "https://hireinai.in/",
+          "name": "HireIn AI",
+          "publisher": {
+            "@id": "https://hireinai.in/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://hireinai.in/jobs.html?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <!-- Template CSS styles the hero; hirein-app.css is the shared HireIn AI design system. -->
     <link rel="stylesheet" href="assets/css/style.css?v=1.0" />
     <link rel="stylesheet" href="assets/css/hirein-app.css" />
@@ -64,13 +109,13 @@
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <div class="banner-imgs" aria-hidden="true">
-                            <img alt="" src="assets/imgs/banner/banner.png" class="img-responsive shape-1" />
-                            <span class="union-icon"><img alt="" src="assets/imgs/banner/union.svg" class="img-responsive shape-3" /></span>
-                            <span class="congratulation-icon"><img alt="" src="assets/imgs/banner/congratulation.svg" class="img-responsive shape-2" /></span>
-                            <span class="docs-icon"><img alt="" src="assets/imgs/banner/docs.svg" class="img-responsive shape-2" /></span>
-                            <span class="course-icon"><img alt="" src="assets/imgs/banner/course.svg" class="img-responsive shape-3" /></span>
-                            <span class="web-dev-icon"><img alt="" src="assets/imgs/banner/web-dev.svg" class="img-responsive shape-3" /></span>
-                            <span class="tick-icon"><img alt="" src="assets/imgs/banner/tick.svg" class="img-responsive shape-3" /></span>
+                            <img alt="" src="assets/imgs/banner/banner.png" class="img-responsive shape-1" fetchpriority="high" decoding="async" width="450" height="450" />
+                            <span class="union-icon"><img alt="" src="assets/imgs/banner/union.svg" class="img-responsive shape-3" width="50" height="50" decoding="async" /></span>
+                            <span class="congratulation-icon"><img alt="" src="assets/imgs/banner/congratulation.svg" class="img-responsive shape-2" width="60" height="60" decoding="async" /></span>
+                            <span class="docs-icon"><img alt="" src="assets/imgs/banner/docs.svg" class="img-responsive shape-2" width="60" height="60" decoding="async" /></span>
+                            <span class="course-icon"><img alt="" src="assets/imgs/banner/course.svg" class="img-responsive shape-3" width="50" height="50" decoding="async" /></span>
+                            <span class="web-dev-icon"><img alt="" src="assets/imgs/banner/web-dev.svg" class="img-responsive shape-3" width="50" height="50" decoding="async" /></span>
+                            <span class="tick-icon"><img alt="" src="assets/imgs/banner/tick.svg" class="img-responsive shape-3" width="50" height="50" decoding="async" /></span>
                         </div>
                     </div>
                 </div>
@@ -104,7 +149,7 @@
     <section class="home-section" aria-labelledby="homeResumeTitle">
         <div class="site-container">
             <div class="cta-panel">
-                <div class="cta-media"><img src="assets/imgs/blog/img-job.png" alt="Professionals collaborating on a project" loading="lazy" /></div>
+                <div class="cta-media"><img src="assets/imgs/blog/img-job.png" alt="Professionals collaborating on a project" loading="lazy" decoding="async" width="540" height="380" /></div>
                 <div class="cta-copy">
                     <span class="eyebrow">AI Resume Builder</span>
                     <h2 id="homeResumeTitle">Build an ATS-friendly resume in minutes</h2>

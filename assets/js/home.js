@@ -13,11 +13,11 @@
       DEFAULT_CATEGORIES.forEach(function (name) { if (names.indexOf(name) < 0) names.push(name); });
       categoriesGrid.innerHTML = names.slice(0, 8).map(function (name) {
         var count = counts[name] || 0;
-        return "<a class='category-card' href='/jobs.html?category=" + encodeURIComponent(name) + "'><img src='" + icon(name) + "' alt='' loading='lazy'><strong>" + esc(name) + "</strong><span>" + (count ? count + (count === 1 ? " open role" : " open roles") : "Explore roles") + "</span></a>";
+        return "<a class='category-card' href='/jobs.html?category=" + encodeURIComponent(name) + "'><img src='" + icon(name) + "' alt='" + esc(name) + " icon' width='24' height='24' loading='lazy' decoding='async'><strong>" + esc(name) + "</strong><span>" + (count ? count + (count === 1 ? " open role" : " open roles") : "Explore roles") + "</span></a>";
       }).join("");
     }
     function emptyJobs(title, text) {
-      jobsGrid.innerHTML = "<div class='empty-state'><img src='assets/imgs/theme/icons/icon-job.svg' alt=''><h3>" + title + "</h3><p>" + text + "</p><a class='small-button' href='/resume-ai.html'>Build your resume meanwhile</a></div>";
+      jobsGrid.innerHTML = "<div class='empty-state'><img src='assets/imgs/theme/icons/icon-job.svg' alt='' width='48' height='48' loading='lazy' decoding='async'><h3>" + title + "</h3><p>" + text + "</p><a class='small-button' href='/resume-ai.html'>Build your resume meanwhile</a></div>";
     }
     if (!api || !api.client || !api.jobs) {
       renderCategories({}); emptyJobs("Jobs are loading slowly", "We couldn't reach the jobs service. Refresh in a moment."); companyGrid.innerHTML = "";
