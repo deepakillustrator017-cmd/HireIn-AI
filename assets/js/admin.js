@@ -263,13 +263,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       var ownerEmail = owner.email || "—";
       var websiteLink = comp.website ? '<a href="' + api.escapeHtml(comp.website) + '" target="_blank" rel="noopener">Visit ↗</a>' : '—';
 
+      var domain = api.extractDomain ? api.extractDomain(comp.website, comp.name) : "";
+      var logoSrc = api.jobs ? api.jobs.logo({ logo: comp.logo_url, website: comp.website, name: comp.name }) : "";
+      var logoImg = '<img src="' + api.escapeHtml(logoSrc) + '" alt="' + api.escapeHtml(comp.name) + ' logo" data-company="' + api.escapeHtml(comp.name) + '" data-domain="' + api.escapeHtml(domain) + '" onerror="window.hireInAI.handleLogoError(this)" referrerpolicy="no-referrer" width="32" height="32" style="width:32px;height:32px;min-width:32px;border-radius:8px;object-fit:contain;border:1px solid #E5E7EB;background:#fff;padding:2px;flex-shrink:0;">';
+
       return (
         '<tr>' +
           '<td><strong>' + api.escapeHtml(ownerName) + '</strong></td>' +
           '<td>' + api.escapeHtml(ownerEmail) + '</td>' +
           '<td>' +
-            '<strong>' + api.escapeHtml(comp.name) + '</strong>' +
-            (comp.location ? '<div class="muted">' + api.escapeHtml(comp.location) + '</div>' : '') +
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+              logoImg +
+              '<div>' +
+                '<strong>' + api.escapeHtml(comp.name) + '</strong>' +
+                (comp.location ? '<div class="muted">' + api.escapeHtml(comp.location) + '</div>' : '') +
+              '</div>' +
+            '</div>' +
           '</td>' +
           '<td>' + websiteLink + '</td>' +
           '<td><span class="badge badge-warning">Pending Approval</span></td>' +
@@ -390,11 +399,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         ? '<a href="' + api.escapeHtml(comp.website) + '" target="_blank" rel="noopener">Website ↗</a>'
         : '<span class="muted">—</span>';
 
+      var domain = api.extractDomain ? api.extractDomain(comp.website, comp.name) : "";
+      var logoSrc = api.jobs ? api.jobs.logo({ logo: comp.logo_url, website: comp.website, name: comp.name }) : "";
+      var logoImg = '<img src="' + api.escapeHtml(logoSrc) + '" alt="' + api.escapeHtml(comp.name) + ' logo" data-company="' + api.escapeHtml(comp.name) + '" data-domain="' + api.escapeHtml(domain) + '" onerror="window.hireInAI.handleLogoError(this)" referrerpolicy="no-referrer" width="32" height="32" style="width:32px;height:32px;min-width:32px;border-radius:8px;object-fit:contain;border:1px solid #E5E7EB;background:#fff;padding:2px;flex-shrink:0;">';
+
       return (
         '<tr>' +
           '<td>' +
-            '<strong>' + api.escapeHtml(comp.name) + '</strong>' +
-            (comp.description ? '<div class="muted" style="font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + api.escapeHtml(comp.description) + '</div>' : '') +
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+              logoImg +
+              '<div>' +
+                '<strong>' + api.escapeHtml(comp.name) + '</strong>' +
+                (comp.description ? '<div class="muted" style="font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + api.escapeHtml(comp.description) + '</div>' : '') +
+              '</div>' +
+            '</div>' +
           '</td>' +
           '<td>' + api.escapeHtml(comp.location || "—") + '</td>' +
           '<td>' + websiteLink + '</td>' +

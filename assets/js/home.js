@@ -46,7 +46,10 @@
     else emptyJobs("New roles are on the way", "Hiring teams are preparing their next openings. Build your resume now so you're ready to apply.");
     var companyNames = Object.keys(companies).sort(function (a, b) { return companies[b] - companies[a] || a.localeCompare(b); }).slice(0, 12);
     companyGrid.innerHTML = companyNames.length ? companyNames.map(function (name) {
-      return "<a class='company-chip' href='/jobs.html?company=" + encodeURIComponent(name) + "'><span class='company-initial' aria-hidden='true'>" + esc(name.charAt(0).toUpperCase()) + "</span><span><strong>" + esc(name) + "</strong><small>" + companies[name] + (companies[name] === 1 ? " open role" : " open roles") + "</small></span></a>";
+      var domain = api.extractDomain ? api.extractDomain("", name) : "";
+      var logoUrl = domain ? "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(domain) + "&sz=64" : "";
+      var logoImg = logoUrl ? "<img class='company-initial' src='" + logoUrl + "' alt='" + esc(name) + " logo' data-company='" + esc(name) + "' data-domain='" + esc(domain) + "' onerror='window.hireInAI.handleLogoError(this)' referrerpolicy='no-referrer' width='44' height='44' style='object-fit:contain;padding:4px;background:#fff;border-radius:12px;border:1px solid #E5E7EB;'>" : "<span class='company-initial' aria-hidden='true'>" + esc(name.charAt(0).toUpperCase()) + "</span>";
+      return "<a class='company-chip' href='/jobs.html?company=" + encodeURIComponent(name) + "'>" + logoImg + "<span><strong>" + esc(name) + "</strong><small>" + companies[name] + (companies[name] === 1 ? " open role" : " open roles") + "</small></span></a>";
     }).join("") : "<p class='empty'>Companies will appear here as they post roles.</p>";
     try {
       var testimonials = await api.client.from("testimonials").select("person_name,role,company_name,quote").eq("is_approved", true).order("created_at", { ascending: false }).limit(3);

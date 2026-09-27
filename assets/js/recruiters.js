@@ -338,11 +338,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       var dateStr = datePosted ? new Date(datePosted).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
       var locType = [job.location || "Remote", job.work_mode || job.employment_type || "Full time"].filter(Boolean).join(" · ");
 
+      var compName = job.company || "Company";
+      var compDomain = api.extractDomain ? api.extractDomain(job.source_url, compName) : "";
+      var logoSrc = api.jobs ? api.jobs.logo(job) : "";
+      var logoImg = '<img src="' + api.escapeHtml(logoSrc) + '" alt="' + api.escapeHtml(compName) + ' logo" data-company="' + api.escapeHtml(compName) + '" data-domain="' + api.escapeHtml(compDomain) + '" onerror="window.hireInAI.handleLogoError(this)" referrerpolicy="no-referrer" width="32" height="32" style="width:32px;height:32px;min-width:32px;border-radius:8px;object-fit:contain;border:1px solid #E5E7EB;background:#fff;padding:2px;flex-shrink:0;">';
+
       return (
         '<tr>' +
           '<td>' +
-            '<strong><a href="/job-single.html?id=' + encodeURIComponent(job.id) + '" target="_blank" title="View live job">' + api.escapeHtml(job.title || "Untitled Role") + ' ↗</a></strong>' +
-            '<div class="muted" style="font-size:12px">' + api.escapeHtml(job.category || "General") + (job.salary ? ' · ' + api.escapeHtml(job.salary) : '') + '</div>' +
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+              logoImg +
+              '<div>' +
+                '<strong><a href="/job-single.html?id=' + encodeURIComponent(job.id) + '" target="_blank" title="View live job">' + api.escapeHtml(job.title || "Untitled Role") + ' ↗</a></strong>' +
+                '<div class="muted" style="font-size:12px">' + api.escapeHtml(compName) + (job.category ? ' · ' + api.escapeHtml(job.category) : '') + (job.salary ? ' · ' + api.escapeHtml(job.salary) : '') + '</div>' +
+              '</div>' +
+            '</div>' +
           '</td>' +
           '<td>' + api.escapeHtml(locType) + '</td>' +
           '<td>' + getJobStatusBadge(job.status) + '</td>' +

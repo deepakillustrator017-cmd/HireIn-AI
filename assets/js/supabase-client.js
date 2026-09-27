@@ -88,6 +88,56 @@
   var MODES=["Remote","Hybrid","Onsite"];
   var CATEGORIES=[["Design",/design|\bui\b|\bux\b|graphic|illustrat|motion|animat|visual|art director/],["Data & AI",/\bdata\b|analyst|machine learning|\bml\b|\bai\b|scientist/],["Engineering",/engineer|developer|programmer|software|front.?end|back.?end|full.?stack|devops|\bqa\b|tester|android|\bios\b/],["Product",/product manager|product owner/],["Marketing",/marketing|\bseo\b|growth|social media|brand manager/],["Content & Writing",/writer|content|copy|editor/],["Sales",/sales|business development|account executive/],["Human Resources",/recruit|talent|\bhr\b|human resource/],["Finance",/accountant|accounting|finance|audit|\btax\b/],["Customer Support",/support|customer success|customer service/],["Operations",/operations|logistics|supply chain/]];
   function titleCase(value){return String(value||"").trim().replace(/\s+/g," ").replace(/\b\w/g,function(c){return c.toUpperCase();});}
+  function generateMonogramSvg(name) {
+    var cleaned = String(name || "Company").trim().replace(/[^a-zA-Z0-9\s]/g, "");
+    var parts = cleaned.split(/\s+/).filter(Boolean);
+    var initials = "";
+    if (parts.length >= 2) {
+      initials = (parts[0][0] + parts[1][0]).toUpperCase();
+    } else if (parts.length === 1 && parts[0].length >= 2) {
+      initials = parts[0].substring(0, 2).toUpperCase();
+    } else if (parts.length === 1) {
+      initials = parts[0][0].toUpperCase();
+    } else {
+      initials = "HI";
+    }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">' +
+      '<rect width="100" height="100" rx="20" fill="#6C3EF4"/>' +
+      '<text x="50" y="52" font-family="-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif" font-size="42" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">' +
+      initials +
+      '</text></svg>';
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  }
+
+  function extractDomain(url, companyName) {
+    if (url && typeof url === "string") {
+      var clean = url.trim().replace(/^https?:\/\//i, "").split("/")[0].split("?")[0].replace(/^www\./i, "");
+      if (clean && clean.indexOf(".") > 0) return clean;
+    }
+    if (companyName && typeof companyName === "string") {
+      var slug = companyName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (slug) return slug + ".com";
+    }
+    return "";
+  }
+
+  function handleLogoError(img, companyName, websiteOrUrl) {
+    if (!img) return;
+    var step = Number(img.dataset.logoStep || 0);
+    var name = companyName || img.getAttribute("data-company") || (img.alt ? img.alt.replace(/\s+logo$/i, "") : "") || "Company";
+    var domain = extractDomain(websiteOrUrl || img.getAttribute("data-domain") || img.getAttribute("data-source-url"), name);
+
+    if (step === 0 && domain && !/google\.com\/s2\/favicons/.test(img.src)) {
+      img.dataset.logoStep = "1";
+      img.src = "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(domain) + "&sz=128";
+      return;
+    }
+
+    img.dataset.logoStep = "2";
+    img.onerror = null;
+    img.src = generateMonogramSvg(name);
+  }
+
   var jobs = {
     MODES:MODES,
     mode:function(job){
@@ -125,7 +175,15 @@
     },
     skills:function(job){return Array.isArray(job.skills)?job.skills.filter(Boolean):String(job.skills||"").split(/[,\n]/).map(function(s){return s.trim();}).filter(Boolean);},
     posted:function(job){var d=new Date(job.posted_at||job.created_at||0);return Number.isNaN(d.getTime())?0:d.getTime();},
-    logo:function(job){var v=String(job.logo||"");if(/^https?:\/\//i.test(v))return v;if(/^\/?assets\/[\w./-]+$/i.test(v))return "/"+v.replace(/^\//,"");return "/assets/imgs/theme/jobhub-logo.svg";},
+    logo:function(job){
+      var v=String((job && (job.logo || job.logo_url)) || "").trim();
+      if(/^https?:\/\//i.test(v))return v;
+      if(/^\/?assets\/[\w./-]+$/i.test(v))return "/"+v.replace(/^\//,"");
+      var compName=String((job && (job.company || job.name)) || "").trim();
+      var domain=extractDomain((job && (job.website || job.source_url)) || "", compName);
+      if(domain)return "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(domain) + "&sz=128";
+      return generateMonogramSvg(compName || "Company");
+    },
     href:function(job){return "/job-single.html?id="+encodeURIComponent(job.id);},
     // One job card used by the homepage, jobs page and related jobs so they always look the same.
     card:function(job,options){
@@ -134,7 +192,9 @@
       var loc=String(job.location||"").trim().replace(/\b\w/g,function(c){return c.toUpperCase();})||"Remote";
       var meta=[loc,jobs.mode(job),jobs.type(job),jobs.levelLabel(jobs.level(job))||job.experience].filter(Boolean);
       var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
-      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(jobs.logo(job))+"'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
+      var domain=extractDomain(job.website || job.source_url, company);
+      var logoSrc=jobs.logo(job);
+      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' decoding='async' width='44' height='44' referrerpolicy='no-referrer' alt='"+escapeHtml(company)+" logo' src='"+escapeHtml(logoSrc)+"' data-company='"+escapeHtml(company)+"' data-domain='"+escapeHtml(domain)+"' onerror='window.hireInAI.handleLogoError(this)'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
         "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
         "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
         (options.summary===false?"":"<p class='job-summary'>"+escapeHtml(String(job.description||"").slice(0,160))+"</p>")+
@@ -152,7 +212,20 @@
       if(r.error&&!(save&&r.error.code==="23505"))throw new Error(r.error.message);
     }
   };
-  window.hireInAI={client:client,escapeHtml:escapeHtml,showMessage:showMessage,safeNext:safeNext,getProfile:getProfile,isMissingColumn:isMissingColumn,resumes:resumes,jobs:jobs,error:null};
+  window.hireInAI={
+    client:client,
+    escapeHtml:escapeHtml,
+    showMessage:showMessage,
+    safeNext:safeNext,
+    getProfile:getProfile,
+    isMissingColumn:isMissingColumn,
+    resumes:resumes,
+    jobs:jobs,
+    monogram:generateMonogramSvg,
+    extractDomain:extractDomain,
+    handleLogoError:handleLogoError,
+    error:null
+  };
   // Header account link: "Sign In" for visitors, "Dashboard" once signed in.
   client.auth.getSession().then(function(result){
     if(!(result.data&&result.data.session))return;

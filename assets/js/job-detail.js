@@ -50,10 +50,18 @@
           if (!companyResult.error && companyResult.data) company = companyResult.data;
         } catch (_) { /* Company profiles are optional until the schema migration is applied. */ }
       }
-      var logo = job.logo || "/assets/imgs/theme/jobhub-logo.svg";
+      var logo = job.logo || company.logo_url || "";
       var image = document.getElementById("jobLogo");
-      image.src = /^https?:\/\//i.test(logo) ? logo : /^\/?assets\/[\w./-]+$/i.test(logo) ? "/" + logo.replace(/^\//, "") : "/assets/imgs/theme/jobhub-logo.svg";
-      image.alt = (job.company || company.name || "Company") + " logo";
+      var compName = job.company || company.name || "Company";
+      var compDomain = api.extractDomain ? api.extractDomain(company.website || job.source_url, compName) : "";
+      if (image) {
+        image.referrerPolicy = "no-referrer";
+        image.alt = compName + " logo";
+        image.dataset.company = compName;
+        image.dataset.domain = compDomain;
+        image.onerror = function () { if (api.handleLogoError) api.handleLogoError(image, compName, compDomain); };
+        image.src = api.jobs.logo({ logo: logo, website: company.website, source_url: job.source_url, company: compName });
+      }
       setText("jobCategory", J.category(job));
       setText("jobTitle", job.title || "Open role");
       setText("jobCompany", job.company || company.name || "Company");
