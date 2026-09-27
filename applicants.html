@@ -12,14 +12,22 @@
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
-  <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html" aria-current="page">Recruiters</a></nav>
-  <a class="site-signin" href="admin.html">Jobs Dashboard</a>
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html" aria-current="page">Recruiters</a></nav>
+  <div class="site-actions"><button class="site-signin" type="button" data-logout>Log Out</button><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
 </div></header>
 <main class="page-shell">
   <section class="page-heading"><div><h1>Applicants</h1><p>Review applications for jobs managed by your recruiter account.</p></div></section>
   <p id="applicantsMessage" class="notice" role="status" aria-live="polite"></p>
   <section class="panel"><div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Job</th><th>Applied</th><th>Resume</th><th>Status</th></tr></thead><tbody id="applicantRows"><tr><td colspan="5" class="empty">Loading applicants...</td></tr></tbody></table></div></section>
 </main>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

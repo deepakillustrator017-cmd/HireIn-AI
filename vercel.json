@@ -1,12 +1,20 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/index-2.html", "destination": "/", "permanent": true },
+    { "source": "/index-3.html", "destination": "/", "permanent": true },
+    { "source": "/index-old.html", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
+    { "source": "/resume", "destination": "/resume-ai.html" },
     { "source": "/jobs", "destination": "/jobs.html" },
     { "source": "/job/:id", "destination": "/job-single.html?id=:id" },
     { "source": "/apply", "destination": "/apply.html" },
     { "source": "/ats", "destination": "/ats.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/recruiter", "destination": "/admin.html" },
+    { "source": "/recruiters", "destination": "/recruiters.html" },
+    { "source": "/recruiter", "destination": "/recruiters.html" },
+    { "source": "/admin", "destination": "/admin.html" },
     { "source": "/login", "destination": "/login.html" },
     { "source": "/signup", "destination": "/signup.html" },
     { "source": "/forgot-password", "destination": "/forgot-password.html" },

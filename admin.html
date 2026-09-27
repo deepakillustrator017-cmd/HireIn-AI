@@ -12,12 +12,12 @@
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
-  <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html" aria-current="page">Recruiters</a></nav>
-  <button class="site-signin" type="button" data-logout>Log Out</button>
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
+  <div class="site-actions"><button class="site-signin" type="button" data-logout>Log Out</button><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
 </div></header>
 <main class="page-shell">
-  <section class="page-heading"><div><h1>Recruiter Dashboard</h1><p>Manage your published opportunities and applications.</p></div><div class="form-actions"><a class="small-button" href="post-job.html">Post a Job</a><a class="small-button" href="applicants.html">View Applicants</a></div></section>
+  <section class="page-heading"><div><h1>Recruiter Dashboard</h1><p>Manage your published opportunities and applications.</p></div><div class="form-actions"><a class="small-button" href="/post-job.html">Post a Job</a><a class="small-button" href="/applicants.html">View Applicants</a></div></section>
   <p id="adminMessage" class="notice" role="status" aria-live="polite"></p>
   <section id="adminContent" class="panel" hidden>
     <div id="analyticsGrid" class="stat-grid" aria-label="Recruiter analytics"><div class="stat-card"><span>Job views</span><strong id="totalViews">0</strong></div><div class="stat-card"><span>Applications</span><strong id="totalApplications">0</strong></div><div class="stat-card"><span>Shortlisted</span><strong id="totalShortlisted">0</strong></div><div class="stat-card"><span>View to application</span><strong id="conversionRate">0%</strong></div></div>
@@ -29,5 +29,13 @@
     </section>
   </section>
 </main>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

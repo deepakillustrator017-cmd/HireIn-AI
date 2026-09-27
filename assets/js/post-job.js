@@ -21,6 +21,6 @@ document.addEventListener("DOMContentLoaded",async function(){
       saved=editId?await client.from("jobs").update(legacy).eq("id",editId).select("id").maybeSingle():await client.from("jobs").insert(Object.assign(legacy,{created_by:user.id})).select("id").single();
     }
     button.disabled=false;if(saved.error){api.showMessage(notice,saved.error.message,"error");return;}
-    api.showMessage(notice,usedLegacyColumns?"Job published. Run the HireIn AI schema migration to enable structured work mode, experience, and salary filters.":"Job published successfully.","success");location.href="admin.html";
+    api.showMessage(notice,usedLegacyColumns?"Job published. Run the HireIn AI schema migration to enable structured work mode, experience, and salary filters.":"Job published successfully.","success");location.href="/recruiters.html";
   });
 });

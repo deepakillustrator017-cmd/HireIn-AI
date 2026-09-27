@@ -11,9 +11,13 @@
   <script defer src="assets/js/supabase-client.js"></script><script defer src="assets/js/ai-service.js"></script><script defer src="assets/js/pdf.js"></script><script defer src="assets/js/resume-builder.js"></script>
 </head>
 <body>
-<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="/">HireIn AI</a><nav class="site-menu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs">Jobs</a><a href="/resume-ai.html" aria-current="page">AI Resume</a><a href="/dashboard">Dashboard</a><a href="/recruiter">Recruiter</a></nav><a class="site-signin" href="/login?next=resume-ai.html">Login</a></div></header>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html" aria-current="page">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
+  <div class="site-actions"><a class="site-signin" href="/login.html" data-auth-link>Sign In</a><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
+</div></header>
 <main class="page-shell resume-builder-page">
-  <section class="page-heading"><div><h1>AI Resume Builder</h1><p>Pick a template, fill in your details, improve your writing with AI and download an ATS-friendly A4 PDF.</p></div><div class="form-actions"><a class="small-button secondary-button" href="/dashboard#resumeLibrary">Resume library</a></div></section>
+  <section class="page-heading"><div><h1>AI Resume Builder</h1><p>Pick a template, fill in your details, improve your writing with AI and download an ATS-friendly A4 PDF.</p></div><div class="form-actions"><a class="small-button secondary-button" href="/dashboard.html#resumeLibrary">Resume library</a></div></section>
   <p id="resumeMessage" class="notice" role="status" aria-live="polite"></p>
   <div id="resumeUndo" class="resume-undo" hidden><span>AI changes applied.</span><button type="button" class="small-button secondary-button" id="undoAi">Undo</button></div>
   <div class="resume-builder-layout">
@@ -66,5 +70,13 @@
     <aside class="resume-preview-wrap" aria-label="Resume preview"><div class="resume-preview-label"><span>Live preview</span><span class="muted">A4 · dashed lines mark approximate page breaks</span></div><div id="resumePreviewFrame" class="resume-preview-frame"><article id="resumePreview" class="resume-sheet template-modern"></article></div></aside>
   </div>
 </main>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

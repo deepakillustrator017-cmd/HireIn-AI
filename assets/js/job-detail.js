@@ -28,10 +28,7 @@
           return { job: j, score: score };
         }).filter(function (r) { return r.score > 0; }).sort(function (a, b) { return b.score - a.score || J.posted(b.job) - J.posted(a.job); }).slice(0, 3);
         if (!ranked.length) return;
-        document.getElementById("relatedList").innerHTML = ranked.map(function (r) {
-          var j = r.job, href = "/job/" + encodeURIComponent(j.id);
-          return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' alt='' src='" + escape(J.logo(j)) + "'><div><div class='category'>" + escape(J.category(j)) + "</div><div class='company'>" + escape(j.company || "Company") + "</div></div></div><h3 class='title'><a href='" + href + "'>" + escape(j.title || "Open role") + "</a></h3><div class='meta'><span>" + escape(j.location || "Remote") + "</span><span>" + escape(J.mode(j)) + "</span></div><div class='salary'>" + escape(j.salary || "Salary not listed") + "</div><div class='footer'><span class='date'></span><a class='btn' href='" + href + "'>View</a></div></article>";
-        }).join("");
+        document.getElementById("relatedList").innerHTML = ranked.map(function (r) { return J.card(r.job, { summary: false }); }).join("");
         document.getElementById("relatedJobs").hidden = false;
       } catch (_) { /* Related jobs are optional. */ }
     }
@@ -76,7 +73,7 @@
       document.getElementById("jobMeta").innerHTML = metadata.map(function (value) { return "<span>" + escape(value) + "</span>"; }).join("");
       setText("jobSalary", job.salary || "Salary not listed");
       setText("companyInfo", [company.description || ((job.company || company.name || "The employer") + " is hiring through HireIn AI."), company.website && "Website: " + company.website, company.location && "Location: " + company.location].filter(Boolean).join("\n"));
-      document.getElementById("applyNow").href = "/apply?id=" + encodeURIComponent(job.id);
+      document.getElementById("applyNow").href = "/apply.html?id=" + encodeURIComponent(job.id);
       document.title = (job.title || "Job details") + " at " + (job.company || company.name || "HireIn AI") + " | HireIn AI";
       document.querySelector("meta[name=description]").content = String(job.description || "Apply to " + job.title + " at " + job.company + " on HireIn AI.").slice(0, 160);
       document.getElementById("jobPostingSchema").textContent = JSON.stringify({
@@ -103,7 +100,7 @@
       function paintSave() { saveButton.textContent = isSaved ? "Saved ✓" : "Save job"; saveButton.setAttribute("aria-pressed", String(isSaved)); }
       if (user) { isSaved = (await J.savedIds(user.id)).has(Number(job.id)); paintSave(); }
       saveButton.addEventListener("click", async function () {
-        if (!user) { location.href = "/login?next=" + encodeURIComponent(location.pathname + location.search); return; }
+        if (!user) { location.href = "/login.html?next=" + encodeURIComponent(location.pathname + location.search); return; }
         saveButton.disabled = true;
         try { await J.setSaved(user.id, job.id, !isSaved); isSaved = !isSaved; paintSave(); api.showMessage(notice, isSaved ? "Job saved to your dashboard." : "Job removed from your saved list.", "success"); }
         catch (error) { api.showMessage(notice, error.message, "error"); }

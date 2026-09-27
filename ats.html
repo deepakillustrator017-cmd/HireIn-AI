@@ -16,15 +16,15 @@
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
-  <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html" aria-current="page">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
-  <a class="site-signin" href="login.html?next=ats.html">Sign In</a>
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html" aria-current="page">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
+  <div class="site-actions"><a class="site-signin" href="/login.html" data-auth-link>Sign In</a><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
 </div></header>
 <main class="page-shell">
   <section class="page-heading"><div><h1>ATS Resume Checker</h1><p>Upload your resume, pick a live job and see how well they match: score, keywords, skill gap, formatting and suggestions.</p></div></section>
   <section class="panel">
     <p id="atsMessage" class="notice" role="status" aria-live="polite"></p>
-    <p id="atsLogin" class="muted" hidden>You can analyze without an account. <a href="login.html?next=ats.html">Sign in</a> to save every report to your dashboard.</p>
+    <p id="atsLogin" class="muted" hidden>You can analyze without an account. <a href="/login.html?next=ats.html">Sign in</a> to save every report to your dashboard.</p>
     <form id="atsForm" novalidate>
       <div class="field"><label for="jobId">Choose a live job</label><select id="jobId" name="job_id"><option value="">Or paste a job description below</option></select></div>
       <div class="field"><label for="jobDescription">Job description</label><textarea id="jobDescription" name="description" rows="7" placeholder="Paste the job description here, or choose a job above."></textarea></div>
@@ -36,5 +36,13 @@
   </section>
   <section id="atsResult" class="panel ats-result" aria-live="polite" hidden></section>
 </main>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

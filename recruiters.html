@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <title>Recruiter Dashboard | HireIn AI</title>
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <link rel="stylesheet" href="assets/css/resume.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/recruiters.js"></script>
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation">
+    <a href="/">Home</a>
+    <a href="/jobs.html">Jobs</a>
+    <a href="/resume-ai.html">AI Resume</a>
+    <a href="/ats.html">ATS Checker</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/recruiters.html" aria-current="page">Recruiters</a>
+  </nav>
+  <div class="site-actions">
+    <button class="site-signin" type="button" data-logout>Log Out</button>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button>
+  </div>
+</div></header>
+
+<main class="page-shell">
+  <!-- Heading & Actions -->
+  <section class="page-heading">
+    <div>
+      <h1>Recruiter Dashboard</h1>
+      <p id="recruiterWelcome">Manage your published opportunities, review applicants, and track hiring analytics.</p>
+    </div>
+    <div class="form-actions">
+      <a class="small-button" href="/post-job.html">+ Post a Job</a>
+      <button class="small-button secondary-button" id="refreshDashboardBtn" type="button">↻ Refresh</button>
+    </div>
+  </section>
+
+  <!-- Notice message banner -->
+  <p id="recruiterMessage" class="notice" role="status" aria-live="polite"></p>
+
+  <!-- Role Warning Banner (shown if role is candidate) -->
+  <section id="roleWarning" class="panel empty-state" hidden>
+    <h3>Recruiter Access Required</h3>
+    <p>Your current account role is <strong>Candidate</strong>. Recruiter permissions are required to post jobs and review candidate applications.</p>
+    <div class="form-actions" style="margin-top:12px">
+      <a class="small-button" href="/dashboard.html">Go to Candidate Dashboard</a>
+      <button class="small-button secondary-button" type="button" data-logout>Sign into Recruiter Account</button>
+    </div>
+  </section>
+
+  <!-- Main Recruiter Workspace -->
+  <div id="recruiterContent" class="section-stack" hidden>
+
+    <!-- 1. Analytics Cards -->
+    <section class="stat-grid" aria-label="Recruiter Performance Analytics">
+      <div class="stat-card">
+        <span>Active Jobs</span>
+        <strong id="statActiveJobs">0</strong>
+        <span class="muted" id="statTotalJobs">0 total posted</span>
+      </div>
+      <div class="stat-card">
+        <span>Total Job Views</span>
+        <strong id="statTotalViews">0</strong>
+        <span class="muted">Live view impressions</span>
+      </div>
+      <div class="stat-card">
+        <span>Total Applications</span>
+        <strong id="statTotalApps">0</strong>
+        <span class="muted" id="statConversion">0% view-to-apply</span>
+      </div>
+      <div class="stat-card">
+        <span>Shortlisted Candidates</span>
+        <strong id="statShortlisted">0</strong>
+        <span class="muted" id="statShortlistRate">0% of applicants</span>
+      </div>
+    </section>
+
+    <!-- 2. Responsive SVG Analytics Charts -->
+    <section class="chart-grid" aria-label="Recruitment Visual Analytics">
+      <!-- Pipeline Funnel Chart -->
+      <article class="panel chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>Application Pipeline</h2>
+            <p>Distribution of candidates across hiring stages</p>
+          </div>
+          <span class="badge badge-shortlisted" id="pipelineTotal">0 candidates</span>
+        </div>
+        <div id="pipelineChartWrap" class="chart-svg-wrap" aria-label="Applicant pipeline chart">
+          <!-- Dynamically generated SVG -->
+        </div>
+      </article>
+
+      <!-- Views vs Applications Performance Chart -->
+      <article class="panel chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>Job Performance</h2>
+            <p>Views vs applications across your posted jobs</p>
+          </div>
+          <div class="chart-legend">
+            <span><i class="legend-dot legend-views"></i> Views</span>
+            <span><i class="legend-dot legend-apps"></i> Applications</span>
+          </div>
+        </div>
+        <div id="performanceChartWrap" class="chart-svg-wrap" aria-label="Job performance chart">
+          <!-- Dynamically generated SVG -->
+        </div>
+      </article>
+    </section>
+
+    <!-- 3. Job Management (CRUD) -->
+    <section class="panel" id="jobsSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>Your Job Postings</h2>
+          <p class="muted">Create, edit, toggle status, or remove your job listings.</p>
+        </div>
+        <a class="small-button" href="/post-job.html">+ Post New Job</a>
+      </div>
+
+      <!-- Job Filter Toolbar -->
+      <div class="recruiter-toolbar">
+        <input type="search" id="jobSearchInput" placeholder="Search by job title or location…" aria-label="Search jobs">
+        <select id="jobStatusFilter" aria-label="Filter by job status">
+          <option value="all">All Statuses</option>
+          <option value="active">Active / Published</option>
+          <option value="closed">Closed / Paused</option>
+          <option value="draft">Drafts</option>
+        </select>
+      </div>
+
+      <!-- Jobs Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company & Location</th>
+              <th>Status</th>
+              <th>Views</th>
+              <th>Applicants</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recruiterJobRows">
+            <tr><td colspan="7" class="empty">Loading your job postings…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Applicant Pipeline Management -->
+    <section class="panel" id="applicantsSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>Applicant Pipeline</h2>
+          <p class="muted">Review candidate profiles, preview resumes, and manage hiring stages.</p>
+        </div>
+      </div>
+
+      <!-- Applicant Filters Toolbar -->
+      <div class="recruiter-toolbar">
+        <input type="search" id="applicantSearchInput" placeholder="Search candidate by name, email or phone…" aria-label="Search applicants">
+        <select id="applicantJobSelect" aria-label="Filter by job">
+          <option value="all">All Jobs</option>
+        </select>
+        <select id="applicantStatusSelect" aria-label="Filter by stage">
+          <option value="all">All Stages</option>
+          <option value="Applied">Applied</option>
+          <option value="Reviewing">Reviewing</option>
+          <option value="Shortlisted">Shortlisted</option>
+          <option value="Interview">Interview</option>
+          <option value="Hired">Hired</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+
+      <!-- Applicants Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Applied Role</th>
+              <th>Applied Date</th>
+              <th>Resume</th>
+              <th>Stage</th>
+              <th>Quick Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recruiterApplicantRows">
+            <tr><td colspan="6" class="empty">Loading applicants…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- Resume Preview Dialog -->
+<dialog id="resumePreviewDialog" class="resume-dialog" aria-labelledby="resumePreviewDialogTitle">
+  <div class="resume-dialog-inner">
+    <header>
+      <h2 id="resumePreviewDialogTitle">Resume Preview</h2>
+      <div>
+        <a id="resumePreviewOpenTab" class="small-button secondary-button" target="_blank" rel="noopener" href="#">Open in new tab ↗</a>
+        <button type="button" class="small-button" id="resumePreviewCloseBtn">Close</button>
+      </div>
+    </header>
+    <iframe id="resumePreviewFrame" title="Candidate Resume Document"></iframe>
+  </div>
+</dialog>
+
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
+</body>
+</html>

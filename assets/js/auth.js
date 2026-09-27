@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded",function(){
   var resetForm=document.getElementById("resetForm");
   if(googleButton)googleButton.addEventListener("click",async function(){
     googleButton.disabled=true;api.showMessage(document.getElementById("authMessage"),"Redirecting to Google...","");
-    var result=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dashboard"}});
+    var result=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/dashboard.html"}});
     if(result.error){api.showMessage(document.getElementById("authMessage"),result.error.message,"error");googleButton.disabled=false;}
   });
   if(forgotForm)forgotForm.addEventListener("submit",async function(event){

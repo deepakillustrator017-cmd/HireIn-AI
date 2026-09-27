@@ -1,6 +1,17 @@
 (function () {
   var url = "https://xyazcbtxuahzrkxdzywy.supabase.co";
   var key = "sb_publishable_q6gw-Br9OjigN_ETqi17yw_RuKBx2Fs";
+  // Shared site chrome: mobile menu toggle and footer year. Runs even if Supabase fails to load.
+  function initChrome() {
+    var toggle=document.querySelector(".site-nav-toggle"),header=document.querySelector(".site-header");
+    if(toggle&&header&&!toggle.dataset.bound){
+      toggle.dataset.bound="1";
+      toggle.addEventListener("click",function(){var open=header.classList.toggle("is-open");toggle.setAttribute("aria-expanded",String(open));toggle.setAttribute("aria-label",open?"Close menu":"Open menu");});
+      document.addEventListener("keydown",function(e){if(e.key==="Escape"&&header.classList.contains("is-open")){header.classList.remove("is-open");toggle.setAttribute("aria-expanded","false");toggle.focus();}});
+    }
+    document.querySelectorAll("[data-year]").forEach(function(node){node.textContent=new Date().getFullYear();});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initChrome);else initChrome();
   if (!window.supabase || !window.supabase.createClient) {
     window.hireInAI = { error: "Supabase library did not load." };
     return;
@@ -15,8 +26,8 @@
     element.className="notice"+(kind?" "+kind:"");
   };
   var safeNext = function() {
-    var next=new URLSearchParams(location.search).get("next")||"/dashboard";
-    if(!/^\/?(?:index(?:\.html)?|jobs(?:\.html)?|job\/\d+|apply(?:\.html)?|ats(?:\.html)?|dashboard(?:\.html)?|resume-ai(?:\.html)?|recruiter(?:\.html)?|login(?:\.html)?|signup(?:\.html)?)(?:\?[a-z0-9_%=&./-]*)?$/i.test(next))return "/dashboard";
+    var next=new URLSearchParams(location.search).get("next")||"/dashboard.html";
+    if(!/^\/?(?:index(?:\.html)?|jobs(?:\.html)?|job-grid(?:\.html)?|job\/\d+|job-single(?:\.html)?|apply(?:\.html)?|ats(?:\.html)?|dashboard(?:\.html)?|resume-ai(?:\.html)?|recruiters(?:\.html)?|recruiter|admin(?:\.html)?|post-job(?:\.html)?|login(?:\.html)?|signup(?:\.html)?)?(?:\?[a-z0-9_%=&./-]*)?$/i.test(next))return "/dashboard.html";
     return next.charAt(0)==="/"?next:"/"+next;
   };
   var getProfile = function(userId) {
@@ -115,6 +126,21 @@
     skills:function(job){return Array.isArray(job.skills)?job.skills.filter(Boolean):String(job.skills||"").split(/[,\n]/).map(function(s){return s.trim();}).filter(Boolean);},
     posted:function(job){var d=new Date(job.posted_at||job.created_at||0);return Number.isNaN(d.getTime())?0:d.getTime();},
     logo:function(job){var v=String(job.logo||"");if(/^https?:\/\//i.test(v))return v;if(/^\/?assets\/[\w./-]+$/i.test(v))return "/"+v.replace(/^\//,"");return "/assets/imgs/theme/jobhub-logo.svg";},
+    href:function(job){return "/job-single.html?id="+encodeURIComponent(job.id);},
+    // One job card used by the homepage, jobs page and related jobs so they always look the same.
+    card:function(job,options){
+      options=options||{};
+      var posted=jobs.posted(job),company=String(job.company||"Company"),href=jobs.href(job),skills=jobs.skills(job);
+      var loc=String(job.location||"").trim().replace(/\b\w/g,function(c){return c.toUpperCase();})||"Remote";
+      var meta=[loc,jobs.mode(job),jobs.type(job),jobs.levelLabel(jobs.level(job))||job.experience].filter(Boolean);
+      var save=options.saveable?"<button class='save-job' type='button' data-save='"+escapeHtml(job.id)+"' aria-pressed='"+Boolean(options.saved)+"' aria-label='"+(options.saved?"Remove ":"Save ")+escapeHtml(job.title||"job")+(options.saved?" from saved jobs":"")+"'>"+(options.saved?"Saved ✓":"Save")+"</button>":"";
+      return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' alt='' src='"+escapeHtml(jobs.logo(job))+"'><div class='job-company-block'><div class='category'>"+escapeHtml(jobs.category(job))+"</div><div class='company'>"+escapeHtml(company)+"</div></div></div>"+
+        "<h3 class='title'><a href='"+href+"'>"+escapeHtml(job.title||"Open role")+"</a></h3>"+
+        "<div class='meta'>"+meta.map(function(m){return "<span>"+escapeHtml(m)+"</span>";}).join("")+"</div>"+
+        (options.summary===false?"":"<p class='job-summary'>"+escapeHtml(String(job.description||"").slice(0,160))+"</p>")+
+        (skills.length?"<div class='job-tags'>"+skills.slice(0,4).map(function(s){return "<span>"+escapeHtml(s)+"</span>";}).join("")+"</div>":"")+
+        "<div class='salary'>"+escapeHtml(job.salary||"Salary not listed")+"</div><div class='footer'><span class='date'>"+(posted?"Posted "+escapeHtml(new Date(posted).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})):"Recently posted")+"</span><div>"+save+"<a class='btn' href='"+href+"'>View</a></div></div></article>";
+    },
     listPublished:async function(columns,limit){
       var query=client.from("jobs").select(columns||"*").in("status",["published","active"]).order("posted_at",{ascending:false});
       if(limit)query=query.limit(limit);
@@ -127,11 +153,16 @@
     }
   };
   window.hireInAI={client:client,escapeHtml:escapeHtml,showMessage:showMessage,safeNext:safeNext,getProfile:getProfile,isMissingColumn:isMissingColumn,resumes:resumes,jobs:jobs,error:null};
+  // Header account link: "Sign In" for visitors, "Dashboard" once signed in.
+  client.auth.getSession().then(function(result){
+    if(!(result.data&&result.data.session))return;
+    document.querySelectorAll("[data-auth-link]").forEach(function(link){link.textContent="Dashboard";link.href="/dashboard.html";});
+  }).catch(function(){});
   document.querySelectorAll("[data-logout]").forEach(function(button) {
     button.addEventListener("click",async function() {
       var result=await client.auth.signOut();
       if(result.error){alert(result.error.message);return;}
-      location.href="index.html";
+      location.href="/";
     });
   });
 })();

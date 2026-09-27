@@ -178,7 +178,7 @@
     if (client) { try { user = (await client.auth.getUser()).data.user; } catch (e) { user = null; } }
     var signIn = document.querySelector(".site-signin");
     if (!user) document.getElementById("atsLogin").hidden = false;
-    else if (signIn) { signIn.textContent = "Dashboard"; signIn.href = "dashboard.html"; }
+    else if (signIn) { signIn.textContent = "Dashboard"; signIn.href = "/dashboard.html"; }
     if (client && api.jobs) {
       var loaded = await api.jobs.listPublished("*");
       if (loaded.error) say("Could not load jobs: " + loaded.error.message + ". You can still paste a job description.", "error");

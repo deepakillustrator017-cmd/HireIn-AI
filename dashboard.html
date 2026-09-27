@@ -14,12 +14,12 @@
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
-  <a class="site-brand" href="index.html">HireIn AI</a>
-  <nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html" aria-current="page">Dashboard</a><a href="admin.html">Recruiters</a></nav>
-  <button class="site-signin" type="button" data-logout>Log Out</button>
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html" aria-current="page">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
+  <div class="site-actions"><button class="site-signin" type="button" data-logout>Log Out</button><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
 </div></header>
 <main class="page-shell">
-  <section class="page-heading"><div><h1>Your career dashboard</h1><p>Welcome, <strong id="userName">Candidate</strong>. Track your HireIn AI activity here.</p></div><div class="form-actions"><a class="small-button" href="/jobs">Browse jobs</a><a class="small-button" href="resume-ai.html">Build resume</a><a class="small-button secondary-button" href="ats.html">Check resume</a></div></section>
+  <section class="page-heading"><div><h1>Your career dashboard</h1><p>Welcome, <strong id="userName">Candidate</strong>. Track your HireIn AI activity here.</p></div><div class="form-actions"><a class="small-button" href="/jobs.html">Browse jobs</a><a class="small-button" href="/resume-ai.html">Build resume</a><a class="small-button secondary-button" href="/ats.html">Check resume</a></div></section>
   <p id="dashboardMessage" class="notice" role="status" aria-live="polite"></p>
   <section class="stat-grid" aria-label="Account summary">
     <div class="stat-card"><span>Applied jobs</span><strong id="applicationCount">0</strong></div>
@@ -31,11 +31,19 @@
     <section class="panel"><h2>Profile settings</h2><form id="profileForm"><div class="form-grid"><div class="field"><label for="profileName">Full name</label><input id="profileName" name="full_name" maxlength="120" required></div><div class="field"><label for="profilePhone">Phone</label><input id="profilePhone" name="phone" type="tel" maxlength="40"></div></div><div class="form-actions"><button type="submit">Save profile</button></div></form></section>
     <section class="panel"><h2>Applied Jobs</h2><div class="table-wrap"><table><thead><tr><th>Role</th><th>Company</th><th>Status</th><th>Applied</th></tr></thead><tbody id="applicationList"><tr><td colspan="4" class="empty">Loading applications...</td></tr></tbody></table></div></section>
     <section class="panel"><h2>Saved Jobs</h2><div class="table-wrap"><table><thead><tr><th>Role</th><th>Company</th><th>Action</th></tr></thead><tbody id="savedList"><tr><td colspan="3" class="empty">Loading saved jobs...</td></tr></tbody></table></div></section>
-    <section class="panel"><div class="resume-section-heading"><h2>ATS History</h2><a class="small-button" href="ats.html">New ATS check</a></div><div class="table-wrap"><table><thead><tr><th>Job</th><th>Score</th><th>Date</th><th>Report</th></tr></thead><tbody id="atsList"><tr><td colspan="4" class="empty">Loading ATS history...</td></tr></tbody></table></div></section>
-    <section class="panel" id="resumeLibrary" aria-labelledby="resumeLibraryHeading"><div class="resume-section-heading"><h2 id="resumeLibraryHeading">Resume Library</h2><a class="small-button" href="resume-ai.html">New resume</a></div><p class="muted">PDFs are stored in your private bucket. Preview and download links are generated on demand and expire quickly.</p><div id="resumeList" class="resume-library" aria-live="polite"><p class="empty">Loading resumes...</p></div></section>
+    <section class="panel"><div class="resume-section-heading"><h2>ATS History</h2><a class="small-button" href="/ats.html">New ATS check</a></div><div class="table-wrap"><table><thead><tr><th>Job</th><th>Score</th><th>Date</th><th>Report</th></tr></thead><tbody id="atsList"><tr><td colspan="4" class="empty">Loading ATS history...</td></tr></tbody></table></div></section>
+    <section class="panel" id="resumeLibrary" aria-labelledby="resumeLibraryHeading"><div class="resume-section-heading"><h2 id="resumeLibraryHeading">Resume Library</h2><a class="small-button" href="/resume-ai.html">New resume</a></div><p class="muted">PDFs are stored in your private bucket. Preview and download links are generated on demand and expire quickly.</p><div id="resumeList" class="resume-library" aria-live="polite"><p class="empty">Loading resumes...</p></div></section>
   </div>
 </main>
 <dialog id="resumeDialog" class="resume-dialog" aria-labelledby="resumeDialogTitle"><div class="resume-dialog-inner"><header><h2 id="resumeDialogTitle">Resume preview</h2><div><a id="resumeDialogOpen" class="small-button secondary-button" target="_blank" rel="noopener" href="#">Open in new tab</a><button type="button" class="small-button" data-close-dialog>Close</button></div></header><iframe id="resumeDialogFrame" title="Resume PDF preview"></iframe></div></dialog>
 <dialog id="atsDialog" class="resume-dialog ats-dialog" aria-labelledby="atsDialogTitle"><div class="resume-dialog-inner"><header><h2 id="atsDialogTitle">ATS report</h2><div><button type="button" class="small-button" data-close-dialog>Close</button></div></header><div id="atsDialogBody" class="ats-dialog-body"></div></div></dialog>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

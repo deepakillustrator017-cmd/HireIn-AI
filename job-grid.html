@@ -1,25 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HireIn AI | Live Jobs</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="assets/css/hirein-app.css">
-<script defer src="assets/js/supabase-client.js"></script>
-<script defer src="assets/js/jobs.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6C3EF4">
+  <meta name="description" content="Search live HireIn AI jobs by role, location, experience, salary and work mode.">
+  <title>Jobs | HireIn AI</title>
+  <link rel="canonical" href="https://hireinai.in/jobs.html">
+  <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/supabase-client.js"></script>
+  <script defer src="assets/js/jobs.js"></script>
 </head>
 <body>
 <header class="site-header"><div class="site-header-inner">
-<a class="site-brand" href="index.html">HireIn AI</a>
-<nav class="site-menu" aria-label="Main navigation"><a href="index.html">Home</a><a href="/jobs" aria-current="page">Jobs</a><a href="ats.html">AI Resume</a><a href="dashboard.html">Dashboard</a><a href="admin.html">Recruiters</a></nav>
-<a class="site-signin" href="login.html">Sign In</a>
+  <a class="site-brand" href="/">HireIn AI</a>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html" aria-current="page">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
+  <div class="site-actions"><a class="site-signin" href="/login.html" data-auth-link>Sign In</a><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
 </div></header>
 <main class="page-shell">
-<section class="page-heading"><div><h1>Find your next role</h1><p>Search open opportunities from HireIn AI employers.</p></div></section>
-<form id="searchForm" class="jobs-toolbar"><input id="search" type="search" aria-label="Search jobs" placeholder="Search by title, company, or location"><button type="submit">Search</button></form>
-<div id="jobsMessage" class="notice" role="status" aria-live="polite"></div>
-<section class="grid" id="jobs" aria-live="polite"><div class="empty">Loading jobs…</div></section>
+  <section class="page-heading"><div><h1>Find your next role</h1><p>Explore verified opportunities and find the right fit for your next career move.</p></div></section>
+  <form id="searchForm" class="jobs-toolbar"><label class="sr-only" for="search">Search jobs</label><input id="search" type="search" aria-label="Search by role, company, skill, or location" placeholder="Search by role, company, skill, or location"><button type="submit">Search</button></form>
+  <section class="panel job-filters" aria-label="Job filters">
+    <div class="form-grid">
+      <div class="field"><label for="filterCategory">Category</label><select id="filterCategory"><option value="">All categories</option></select></div>
+      <div class="field"><label for="filterLocation">Location</label><select id="filterLocation"><option value="">All locations</option></select></div>
+      <div class="field"><label for="filterExperience">Experience</label><select id="filterExperience"><option value="">Any experience</option><option value="entry">Entry level</option><option value="mid">Mid level</option><option value="senior">Senior level</option></select></div>
+      <div class="field"><label for="filterSalary">Minimum salary</label><select id="filterSalary"><option value="0">Any salary</option><option value="300000">₹3 LPA+</option><option value="600000">₹6 LPA+</option><option value="1000000">₹10 LPA+</option><option value="1500000">₹15 LPA+</option></select></div>
+      <div class="field"><label for="filterMode">Work mode</label><select id="filterMode"><option value="">Remote, hybrid or onsite</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></div>
+      <div class="field"><label for="filterType">Employment type</label><select id="filterType"><option value="">Any employment type</option><option>Full time</option><option>Part time</option><option>Contract</option><option>Freelance</option><option>Internship</option></select></div>
+      <div class="field"><label for="filterCompany">Company</label><select id="filterCompany"><option value="">All companies</option></select></div>
+      <div class="field"><label for="sortJobs">Sort by</label><select id="sortJobs"><option value="newest">Newest</option><option value="salary-high">Salary: high to low</option><option value="salary-low">Salary: low to high</option></select></div>
+    </div>
+    <div class="job-filter-actions"><button type="button" id="clearFilters" class="save-job">Clear filters</button></div>
+  </section>
+  <p id="jobsMessage" class="notice" role="status" aria-live="polite"></p>
+  <p id="jobsCount" class="jobs-count" aria-live="polite"></p>
+  <section class="grid" id="jobs" aria-live="polite"><div class="empty">Loading jobs…</div></section>
+  <nav id="jobsPagination" class="pagination" aria-label="Jobs pages"></nav>
 </main>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
+  <nav class="site-footer-links" aria-label="Footer">
+    <div><h2>Candidates</h2><a href="/jobs.html">Browse jobs</a><a href="/resume-ai.html">AI Resume Builder</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a></div>
+    <div><h2>Employers</h2><a href="/recruiters.html">Recruiter dashboard</a><a href="/post-job.html">Post a job</a><a href="/signup.html">Create an account</a></div>
+    <div><h2>Account</h2><a href="/login.html">Sign in</a><a href="/signup.html">Sign up</a><a href="/forgot-password.html">Reset password</a></div>
+  </nav>
+</div><div class="site-footer-bottom">© <span data-year>2026</span> HireIn AI. All rights reserved.</div></footer>
 </body>
 </html>

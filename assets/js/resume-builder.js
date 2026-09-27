@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try { var auth = await client.auth.getUser(); user = auth.data && auth.data.user; } catch (e) { user = null; }
   }
   var signIn = document.querySelector(".site-signin");
-  if (user) { if (signIn) { signIn.textContent = "Dashboard"; signIn.href = "/dashboard"; } }
+  if (user) { if (signIn) { signIn.textContent = "Dashboard"; signIn.href = "/dashboard.html"; } }
   else document.getElementById("saveHint").textContent = "You can build and download without an account. Sign in to save resumes to your dashboard library.";
   var id = new URLSearchParams(location.search).get("id");
   if (id && user && api.resumes) {
