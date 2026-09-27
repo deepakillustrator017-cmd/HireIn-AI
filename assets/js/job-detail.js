@@ -1,5 +1,13 @@
 (function () {
   "use strict";
+  // Only allow http(s) employer links; bare domains get https:// added.
+  function safeUrl(value) {
+    var url = String(value || "").trim();
+    if (!url) return "";
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) url = "https://" + url.replace(/^\/+/, "");
+    try { var parsed = new URL(url); return /^https?:$/.test(parsed.protocol) && parsed.hostname.indexOf(".") > 0 ? parsed.href : ""; }
+    catch (e) { return ""; }
+  }
   document.addEventListener("DOMContentLoaded", async function () {
     var api = window.hireInAI;
     if (!api || !api.client) return;
@@ -79,7 +87,7 @@
       document.getElementById("jobSkills").innerHTML = skills.map(function (skill) { return "<span>" + escape(skill) + "</span>"; }).join("");
       var mode = J.mode(job);
       var applyType = String(job.apply_type || "").trim().toLowerCase();
-      var isExternal = applyType === "external" || (!applyType && Boolean(job.apply_url || job.source_url));
+      var isExternal = applyType === "external" || (applyType !== "internal" && Boolean(job.apply_url || job.source_url));
       var applyBadge = isExternal
         ? "<span class='badge badge-external'>🌐 External Apply</span>"
         : "<span class='badge badge-internal'>🟣 HireIn Apply</span>";
@@ -93,38 +101,43 @@
       var applyBtn = document.getElementById("applyNow");
       var applyNotice = document.getElementById("externalApplyNotice");
       if (isExternal) {
-        var externalUrl = job.apply_url || job.source_url || "";
-        if (externalUrl && !/^https?:\/\//i.test(externalUrl)) {
-          externalUrl = "https://" + externalUrl;
-        }
-        applyBtn.innerHTML = escape(job.apply_label || "Apply on Company Website") + " <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-left:4px' aria-hidden='true'><path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'></path><polyline points='15 3 21 3 21 9'></polyline><line x1='10' y1='14' x2='21' y2='3'></line></svg>";
-        applyBtn.setAttribute("href", externalUrl || "javascript:void(0);");
-        applyBtn.setAttribute("target", "_blank");
-        applyBtn.setAttribute("rel", "noopener noreferrer");
-        applyBtn.setAttribute("data-apply-click", String(job.id));
-        applyBtn.setAttribute("data-apply-type", "external");
-        if (applyNotice) applyNotice.hidden = false;
+        var externalUrl = safeUrl(job.apply_url) || safeUrl(job.source_url);
+        if (!externalUrl) {
+          // External job without a usable employer link: never fall back to the HireIn form.
+          applyBtn.textContent = "Official application link unavailable.";
+          applyBtn.removeAttribute("href");
+          applyBtn.setAttribute("aria-disabled", "true");
+          applyBtn.classList.add("is-disabled");
+          applyBtn.style.pointerEvents = "none";
+          applyBtn.style.opacity = "0.6";
+          applyBtn.onclick = null;
+          if (applyNotice) applyNotice.hidden = true;
+        } else {
+          applyBtn.innerHTML = escape(job.apply_label || "Apply on Company Website") + " <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-left:4px' aria-hidden='true'><path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'></path><polyline points='15 3 21 3 21 9'></polyline><line x1='10' y1='14' x2='21' y2='3'></line></svg>";
+          applyBtn.setAttribute("href", externalUrl);
+          applyBtn.setAttribute("target", "_blank");
+          applyBtn.setAttribute("rel", "noopener noreferrer");
+          applyBtn.setAttribute("data-apply-click", String(job.id));
+          applyBtn.setAttribute("data-apply-type", "external");
+          if (applyNotice) applyNotice.hidden = false;
 
-        // Primary button behavior:
-        // - Open job.apply_url
-        // - window.open(job.apply_url, '_blank', 'noopener,noreferrer')
-        // - Save analytics into apply_clicks
-        // - Never navigate to apply.html
-        applyBtn.onclick = function (e) {
-          if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-          var targetUrl = job.apply_url || job.source_url;
-          if (targetUrl) {
-            if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+          // Primary button behavior:
+          // - Open job.apply_url
+          // - window.open(job.apply_url, '_blank', 'noopener,noreferrer')
+          // - Save analytics into apply_clicks
+          // - Never navigate to apply.html
+          applyBtn.onclick = function (e) {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
             if (api && api.recordApplyClick) {
               api.recordApplyClick(job.id, "external");
             }
-            window.open(targetUrl, "_blank", "noopener,noreferrer");
-          }
-          return false;
-        };
+            window.open(externalUrl, "_blank", "noopener,noreferrer");
+            return false;
+          };
+        }
       } else {
         applyBtn.textContent = "Apply on HireIn";
         applyBtn.href = "/apply.html?job=" + encodeURIComponent(job.id);

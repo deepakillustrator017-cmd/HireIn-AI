@@ -12,6 +12,15 @@
   <link rel="apple-touch-icon" href="assets/imgs/theme/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <style>
+    .apply-gate{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 12px;text-align:center}
+    .apply-gate p{margin:0;color:var(--hirein-ink);font-weight:600;overflow-wrap:anywhere}
+    .apply-gate.is-error p{color:#b42318}
+    .apply-gate.is-error .apply-spinner{display:none}
+    .apply-spinner{width:32px;height:32px;border:3px solid #e9e4f6;border-top-color:var(--hirein-purple);border-radius:50%;animation:apply-spin .8s linear infinite}
+    @keyframes apply-spin{to{transform:rotate(360deg)}}
+    @media (prefers-reduced-motion:reduce){.apply-spinner{animation-duration:2.4s}}
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="assets/js/supabase-client.js"></script>
   <script defer src="assets/js/apply.js"></script>
@@ -28,7 +37,9 @@
     <p id="jobTitle" class="job-summary">Loading job...</p>
     <p id="status" class="notice" role="status" aria-live="polite"></p>
     <a id="loginLink" class="small-button" href="/login.html" hidden>Sign in to apply</a>
-    <form id="applicationForm">
+    <div id="applyGate" class="apply-gate" role="status" aria-live="polite"><span class="apply-spinner" aria-hidden="true"></span><p id="applyGateText">Loading job details…</p><a id="applyGateLink" class="small-button" href="/jobs.html" hidden>Browse other jobs</a></div>
+    <noscript><p class="notice error">JavaScript is required to apply. <a href="/jobs.html">Browse jobs</a></p></noscript>
+    <form id="applicationForm" hidden>
       <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
       <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
       <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="40"></div>
