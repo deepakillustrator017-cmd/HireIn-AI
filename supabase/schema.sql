@@ -87,6 +87,7 @@ alter table public.jobs add column if not exists expires_at timestamptz;
 alter table public.jobs add column if not exists updated_at timestamptz not null default now();
 alter table public.jobs add column if not exists created_by uuid references auth.users(id) on delete set null;
 alter table public.jobs add column if not exists status text not null default 'published';
+alter table public.jobs add column if not exists source_url text;
 -- Older rows stored the work mode (Remote/Hybrid/Onsite) in employment_type; move it to work_mode.
 update public.jobs set work_mode = initcap(employment_type), employment_type = 'Full time'
 where lower(employment_type) in ('remote', 'hybrid', 'onsite');
