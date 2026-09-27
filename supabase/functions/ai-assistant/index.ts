@@ -7,12 +7,16 @@ const corsHeaders = {
 const actions = new Set([
   "generateSummary", "improveExperience", "generateAchievements", "grammarCorrection",
   "atsOptimize", "suggestSkills", "extractKeywords", "calculateATS", "analyzeATS",
+  "rewriteExperience", "improveBulletPoints", "optimizeATS",
 ]);
 
 const actionInstructions: Record<string, string> = {
   generateSummary: 'Return JSON: {"summary":"..."}. Write a concise, truthful resume summary using only the supplied facts.',
   improveExperience: 'Return JSON: {"bullets":["..."]}. Improve the supplied experience bullets. Preserve facts and metrics; never invent results.',
-  generateAchievements: 'Return JSON: {"achievements":["..."]}. Suggest achievement drafts grounded only in supplied details. Mark any assumptions as placeholders.',
+  generateAchievements: 'Return JSON: {"achievements":[{"text":"...","needsVerification":true}]}. Suggest achievement drafts grounded only in supplied details. Put any number or outcome you cannot verify in [square-bracket placeholders] and set needsVerification true.',
+  rewriteExperience: 'Return JSON: {"experience":[{"index":0,"role":"...","organization":"...","bullets":["..."]}]}. Rewrite each supplied resume.experience entry (keep its index) into 3-6 concise action-verb bullets. Preserve facts, dates and metrics; never invent results.',
+  improveBulletPoints: 'Return JSON: {"bullets":[{"original":"...","improved":"...","changes":["..."],"tips":["..."]}]}. Improve each supplied bullet in order: strong action verb, concise, no filler. Never invent numbers; put missing-metric advice in tips.',
+  optimizeATS: 'Return JSON: {"score":0,"matchedKeywords":["..."],"missingKeywords":["..."],"sectionChecks":[{"section":"...","ok":true,"tip":"..."}],"suggestions":["..."]}. Score 0-100 how well the structured resume would parse and match the optional jobDescription. Never infer protected traits or make a hiring decision.',
   grammarCorrection: 'Return JSON: {"correctedText":"..."}. Correct grammar and spelling while preserving meaning, claims, and tone.',
   atsOptimize: 'Return JSON: {"optimizedText":"...","suggestions":["..."]}. Improve ATS readability without inventing experience or keywords unsupported by the supplied text.',
   suggestSkills: 'Return JSON: {"skills":["..."],"reason":"..."}. Suggest only skills supported by the supplied career information and target role.',

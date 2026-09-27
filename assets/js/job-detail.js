@@ -3,7 +3,7 @@
   document.addEventListener("DOMContentLoaded", async function () {
     var api = window.hireInAI;
     if (!api || !api.client) return;
-    var client = api.client;
+    var client = api.client, J = api.jobs;
     var notice = document.getElementById("jobMessage");
     var content = document.getElementById("jobContent");
     var match = location.pathname.match(/\/job\/([^/]+)/i);
@@ -14,6 +14,26 @@
       var target = document.getElementById(id);
       var lines = Array.isArray(value) ? value : String(value || "").split(/\r?\n/).filter(Boolean);
       target.innerHTML = lines.length ? lines.map(function (line) { return "<p>" + escape(line) + "</p>"; }).join("") : "<p>Details will be shared by the employer.</p>";
+    }
+    // Related jobs: same category, company, work mode, location or shared title/skill words.
+    async function renderRelated(job) {
+      try {
+        var result = await J.listPublished("*", 60);
+        if (result.error) return;
+        var words = function (j) { return new Set((String(j.title || "") + " " + J.skills(j).join(" ")).toLowerCase().match(/[a-z][a-z+#]{2,}/g) || []); };
+        var mine = words(job), category = J.category(job), mode = J.mode(job), place = String(job.location || "").toLowerCase();
+        var ranked = (result.data || []).filter(function (j) { return String(j.id) !== String(job.id); }).map(function (j) {
+          var score = (J.category(j) === category ? 4 : 0) + (j.company && j.company === job.company ? 2 : 0) + (J.mode(j) === mode ? 1 : 0) + (String(j.location || "").toLowerCase() === place ? 1 : 0);
+          words(j).forEach(function (w) { if (mine.has(w)) score += 2; });
+          return { job: j, score: score };
+        }).filter(function (r) { return r.score > 0; }).sort(function (a, b) { return b.score - a.score || J.posted(b.job) - J.posted(a.job); }).slice(0, 3);
+        if (!ranked.length) return;
+        document.getElementById("relatedList").innerHTML = ranked.map(function (r) {
+          var j = r.job, href = "/job/" + encodeURIComponent(j.id);
+          return "<article class='card'><div class='head'><img class='logo-img' loading='lazy' alt='' src='" + escape(J.logo(j)) + "'><div><div class='category'>" + escape(J.category(j)) + "</div><div class='company'>" + escape(j.company || "Company") + "</div></div></div><h3 class='title'><a href='" + href + "'>" + escape(j.title || "Open role") + "</a></h3><div class='meta'><span>" + escape(j.location || "Remote") + "</span><span>" + escape(J.mode(j)) + "</span></div><div class='salary'>" + escape(j.salary || "Salary not listed") + "</div><div class='footer'><span class='date'></span><a class='btn' href='" + href + "'>View</a></div></article>";
+        }).join("");
+        document.getElementById("relatedJobs").hidden = false;
+      } catch (_) { /* Related jobs are optional. */ }
     }
     if (!/^\d+$/.test(String(jobId || ""))) {
       api.showMessage(notice, "This job link is invalid. Browse jobs and try again.", "error");
@@ -37,7 +57,7 @@
       var image = document.getElementById("jobLogo");
       image.src = /^https?:\/\//i.test(logo) ? logo : /^\/?assets\/[\w./-]+$/i.test(logo) ? "/" + logo.replace(/^\//, "") : "/assets/imgs/theme/jobhub-logo.svg";
       image.alt = (job.company || company.name || "Company") + " logo";
-      setText("jobCategory", job.category || "Opportunity");
+      setText("jobCategory", J.category(job));
       setText("jobTitle", job.title || "Open role");
       setText("jobCompany", job.company || company.name || "Company");
       setText("jobBreadcrumb", job.title || "Job details");
@@ -51,7 +71,8 @@
       var skills = Array.isArray(job.skills) ? job.skills : String(job.skills || "").split(/[,\n]/).map(function (skill) { return skill.trim(); }).filter(Boolean);
       document.getElementById("skillsSection").hidden = !skills.length;
       document.getElementById("jobSkills").innerHTML = skills.map(function (skill) { return "<span>" + escape(skill) + "</span>"; }).join("");
-      var metadata = [job.location || "Remote", job.work_mode || (/remote/i.test(job.location || "") ? "Remote" : "Onsite"), job.experience, job.employment_type || job.type || "Full time", job.posted_at ? "Posted " + new Date(job.posted_at).toLocaleDateString("en-IN") : "Recently posted"].filter(Boolean);
+      var mode = J.mode(job);
+      var metadata = [job.location || "Remote", mode, J.levelLabel(J.level(job)) || job.experience, J.type(job), job.posted_at ? "Posted " + new Date(job.posted_at).toLocaleDateString("en-IN") : "Recently posted"].filter(Boolean);
       document.getElementById("jobMeta").innerHTML = metadata.map(function (value) { return "<span>" + escape(value) + "</span>"; }).join("");
       setText("jobSalary", job.salary || "Salary not listed");
       setText("companyInfo", [company.description || ((job.company || company.name || "The employer") + " is hiring through HireIn AI."), company.website && "Website: " + company.website, company.location && "Location: " + company.location].filter(Boolean).join("\n"));
@@ -61,11 +82,11 @@
       document.getElementById("jobPostingSchema").textContent = JSON.stringify({
         "@context": "https://schema.org", "@type": "JobPosting", title: job.title,
         description: job.description, datePosted: job.posted_at || job.created_at,
-        validThrough: job.expires_at || undefined, employmentType: job.employment_type || job.type || "FULL_TIME",
+        validThrough: job.expires_at || undefined, employmentType: J.type(job).toUpperCase().replace(/\s+/g, "_"),
         hiringOrganization: { "@type": "Organization", name: job.company || company.name || "Employer", sameAs: company.website || undefined, logo: company.logo_url || undefined },
-        jobLocationType: job.work_mode === "Remote" ? "TELECOMMUTE" : undefined,
-        applicantLocationRequirements: job.work_mode === "Remote" ? { "@type": "Country", name: "India" } : undefined,
-        jobLocation: job.work_mode === "Remote" ? undefined : { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.location || undefined, addressCountry: "IN" } },
+        jobLocationType: mode === "Remote" ? "TELECOMMUTE" : undefined,
+        applicantLocationRequirements: mode === "Remote" ? { "@type": "Country", name: "India" } : undefined,
+        jobLocation: mode === "Remote" ? undefined : { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.location || undefined, addressCountry: "IN" } },
         baseSalary: job.salary_min ? { "@type": "MonetaryAmount", currency: job.currency || "INR", value: { "@type": "QuantitativeValue", minValue: job.salary_min, maxValue: job.salary_max || undefined, unitText: "YEAR" } } : undefined
       });
       content.hidden = false;
@@ -77,16 +98,18 @@
           sessionStorage.setItem(viewKey, "1");
         }
       } catch (_) { /* View analytics must not block a job detail page. */ }
-      var saveButton = document.getElementById("saveJob");
+      document.getElementById("checkAts").href = "/ats.html?job=" + encodeURIComponent(job.id);
+      var saveButton = document.getElementById("saveJob"), isSaved = false;
+      function paintSave() { saveButton.textContent = isSaved ? "Saved ✓" : "Save job"; saveButton.setAttribute("aria-pressed", String(isSaved)); }
+      if (user) { isSaved = (await J.savedIds(user.id)).has(Number(job.id)); paintSave(); }
       saveButton.addEventListener("click", async function () {
         if (!user) { location.href = "/login?next=" + encodeURIComponent(location.pathname + location.search); return; }
         saveButton.disabled = true;
-        var saved = await client.from("saved_jobs").insert({ user_id: user.id, job_id: Number(job.id) });
-        if (saved.error && saved.error.code !== "23505") {
-          api.showMessage(notice, saved.error.message, "error"); saveButton.disabled = false; return;
-        }
-        saveButton.textContent = "Saved";
+        try { await J.setSaved(user.id, job.id, !isSaved); isSaved = !isSaved; paintSave(); api.showMessage(notice, isSaved ? "Job saved to your dashboard." : "Job removed from your saved list.", "success"); }
+        catch (error) { api.showMessage(notice, error.message, "error"); }
+        saveButton.disabled = false;
       });
+      renderRelated(job);
     } catch (error) {
       api.showMessage(notice, error.message || "Could not load this job.", "error");
     }

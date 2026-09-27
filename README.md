@@ -13,6 +13,12 @@ Static HTML, CSS, and vanilla JavaScript hiring platform. Vercel serves the proj
 
 With the Supabase CLI linked to this project, deploy the function using `supabase functions deploy ai-assistant`; set the provider key with `supabase secrets set OPENAI_API_KEY=...`. Optionally configure `OPENAI_MODEL` and comma-separated `AI_ALLOWED_ORIGINS`. The model key stays server-side and is never included in the static frontend. Without the secret, resume writing actions show a setup message and ATS still provides its local keyword analysis.
 
+## AI Resume Builder
+
+`resume-ai.html` offers four templates (Modern, Minimal, Executive, Creative) with a live A4 preview. **Download Resume** draws the PDF with jsPDF's vector text API (`assets/js/pdf.js`): selectable text, embedded subset fonts from `assets/fonts/resume/` (Poppins and Crimson Text, SIL OFL), clickable links, and no canvas screenshots. Signed-in users also get the PDF uploaded to the private `resumes` bucket at `<user-id>/builder/<uuid>.pdf`, plus a `resumes` row (`resume_name`, `resume_url` = storage path, `template`, `resume_data`). The dashboard Resume Library previews, renames, downloads, edits and deletes these (delete removes the storage object and the row).
+
+AI tools (`generateSummary`, `rewriteExperience`, `improveBulletPoints`, `generateAchievements`, `optimizeATS` in `assets/js/ai-service.js`) return `{ ok, action, source, generatedAt, data, warnings }`. They use the `ai-assistant` edge function when the user is signed in and it is deployed, and otherwise fall back to built-in rules that never invent facts. Redeploy the function after pulling these changes.
+
 ## Vercel
 
 Connect the repository with the project root as the Root Directory and no build command or output directory. Vercel serves the HTML and static assets directly; `vercel.json` maps `/jobs`, `/job/:id`, `/apply`, `/ats`, `/dashboard`, `/recruiter`, and auth routes to their HTML files. The detail route uses root-relative scripts and styles so assets resolve under `/job/<id>`.

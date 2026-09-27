@@ -5,41 +5,65 @@
   <meta name="description" content="Create, improve and download an ATS-friendly resume with HireIn AI.">
   <title>AI Resume Builder | HireIn AI</title>
   <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <link rel="stylesheet" href="assets/css/resume.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
-  <script defer src="assets/js/supabase-client.js"></script><script defer src="assets/js/ai-service.js"></script><script defer src="assets/js/resume-builder.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="assets/js/supabase-client.js"></script><script defer src="assets/js/ai-service.js"></script><script defer src="assets/js/pdf.js"></script><script defer src="assets/js/resume-builder.js"></script>
 </head>
 <body>
-<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="/">HireIn AI</a><nav class="site-menu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs">Jobs</a><a href="/resume-ai.html" aria-current="page">AI Resume</a><a href="/dashboard">Dashboard</a><a href="/recruiter">Recruiter</a></nav><a class="site-signin" href="/login">Login</a></div></header>
+<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="/">HireIn AI</a><nav class="site-menu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs">Jobs</a><a href="/resume-ai.html" aria-current="page">AI Resume</a><a href="/dashboard">Dashboard</a><a href="/recruiter">Recruiter</a></nav><a class="site-signin" href="/login?next=resume-ai.html">Login</a></div></header>
 <main class="page-shell resume-builder-page">
-  <section class="page-heading"><div><h1>AI Resume Builder</h1><p>Create an ATS-friendly resume, improve your writing, and save a print-ready PDF to your dashboard.</p></div></section>
+  <section class="page-heading"><div><h1>AI Resume Builder</h1><p>Pick a template, fill in your details, improve your writing with AI and download an ATS-friendly A4 PDF.</p></div><div class="form-actions"><a class="small-button secondary-button" href="/dashboard#resumeLibrary">Resume library</a></div></section>
   <p id="resumeMessage" class="notice" role="status" aria-live="polite"></p>
+  <div id="resumeUndo" class="resume-undo" hidden><span>AI changes applied.</span><button type="button" class="small-button secondary-button" id="undoAi">Undo</button></div>
   <div class="resume-builder-layout">
     <section class="panel resume-editor" aria-labelledby="resumeEditorHeading">
       <h2 id="resumeEditorHeading">Your details</h2>
-      <form id="resumeForm">
+      <form id="resumeForm" novalidate>
         <div class="field"><label for="resumeName">Resume name</label><input id="resumeName" name="resume_name" maxlength="120" value="My HireIn AI resume" required></div>
-        <div class="field"><label for="resumeTemplate">Template</label><select id="resumeTemplate" name="template"><option value="modern">Modern</option><option value="minimal">Minimal</option><option value="executive">Executive</option><option value="creative">Creative</option></select></div>
-        <section class="resume-form-section"><h3>Personal</h3><div class="form-grid">
-          <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
-          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254"></div>
-          <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
-          <div class="field"><label for="location">Location</label><input id="location" name="location" autocomplete="address-level2" maxlength="120"></div>
-          <div class="field"><label for="portfolio">Portfolio</label><input id="portfolio" name="portfolio" type="url" placeholder="https://" maxlength="500"></div>
-          <div class="field"><label for="linkedin">LinkedIn</label><input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." maxlength="500"></div>
-        </div></section>
-        <section class="resume-form-section"><h3>Summary</h3><div class="field"><label for="summary">Professional summary</label><textarea id="summary" name="summary" rows="5" maxlength="2500"></textarea><div class="resume-ai-actions"><button class="small-button ai-action" type="button" data-ai="generateSummary" data-target="summary">Write with AI</button><button class="small-button ai-action" type="button" data-ai="grammarCorrection" data-target="summary">Grammar correction</button><button class="small-button ai-action" type="button" data-ai="atsOptimize" data-target="summary">ATS optimize</button></div></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Experience</h3><button type="button" class="small-button secondary-button" data-add="experienceList" data-kind="experience">Add role</button></div><div id="experienceList"></div><div class="resume-ai-actions"><button type="button" class="small-button ai-action" data-ai="improveExperience" data-target="experienceList">Improve bullets with AI</button><button type="button" class="small-button ai-action" data-ai="generateAchievements" data-target="experienceList">Draft achievements</button></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Projects</h3><button type="button" class="small-button secondary-button" data-add="projectList" data-kind="project">Add project</button></div><div id="projectList"></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Education</h3><button type="button" class="small-button secondary-button" data-add="educationList" data-kind="education">Add education</button></div><div id="educationList"></div></section>
-        <section class="resume-form-section"><h3>Skills</h3><div class="field"><label for="skills">Skills (separate with commas)</label><textarea id="skills" name="skills" rows="3" maxlength="1500"></textarea><button class="small-button ai-action" type="button" data-ai="suggestSkills" data-target="skills">Suggest skills with AI</button></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Certificates</h3><button type="button" class="small-button secondary-button" data-add="certificateList" data-kind="certificate">Add certificate</button></div><div id="certificateList"></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Languages</h3><button type="button" class="small-button secondary-button" data-add="languageList" data-kind="language">Add language</button></div><div id="languageList"></div></section>
-        <section class="resume-form-section"><div class="resume-section-heading"><h3>Links</h3><button type="button" class="small-button secondary-button" data-add="linkList" data-kind="link">Add link</button></div><div id="linkList"></div></section>
-        <div class="form-actions"><button id="downloadResume" type="button">Generate PDF & Save</button><button id="printResume" type="button" class="save-job">Print preview</button></div>
+        <fieldset class="template-picker"><legend>Template</legend>
+          <label><input type="radio" name="template" value="modern" checked><span class="template-swatch swatch-modern" aria-hidden="true"></span>Modern</label>
+          <label><input type="radio" name="template" value="minimal"><span class="template-swatch swatch-minimal" aria-hidden="true"></span>Minimal</label>
+          <label><input type="radio" name="template" value="executive"><span class="template-swatch swatch-executive" aria-hidden="true"></span>Executive</label>
+          <label><input type="radio" name="template" value="creative"><span class="template-swatch swatch-creative" aria-hidden="true"></span>Creative</label>
+        </fieldset>
+
+        <section class="resume-form-section"><h3>Personal</h3>
+          <div class="photo-field">
+            <img id="photoPreview" class="photo-thumb" alt="" hidden>
+            <span id="photoPlaceholder" class="photo-thumb photo-empty" aria-hidden="true">Photo</span>
+            <div class="photo-controls"><label class="small-button secondary-button" for="photoInput">Upload photo</label><input id="photoInput" class="sr-only" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="removePhoto" class="small-button danger" hidden>Remove</button><span class="muted">Optional. JPG, PNG or WebP up to 8 MB. Many ATS ignore photos.</span></div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="fullName">Full name</label><input id="fullName" name="full_name" autocomplete="name" required maxlength="120"></div>
+            <div class="field"><label for="jobTitle">Job title</label><input id="jobTitle" name="job_title" autocomplete="organization-title" maxlength="120" placeholder="e.g. Senior Product Designer"></div>
+            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254"></div>
+            <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+            <div class="field"><label for="location">Location</label><input id="location" name="location" autocomplete="address-level2" maxlength="120"></div>
+            <div class="field"><label for="portfolio">Portfolio</label><input id="portfolio" name="portfolio" type="url" placeholder="https://" maxlength="500"></div>
+            <div class="field field-wide"><label for="linkedin">LinkedIn</label><input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." maxlength="500"></div>
+          </div>
+        </section>
+
+        <section class="resume-form-section"><h3>Professional summary</h3><div class="field"><label for="summary">Summary</label><textarea id="summary" name="summary" rows="5" maxlength="2500"></textarea><div class="resume-ai-actions"><button class="small-button ai-action" type="button" data-ai="generateSummary">Generate summary</button><button class="small-button ai-action" type="button" data-ai="grammarCorrection">Fix grammar</button></div></div></section>
+
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Experience</h3><button type="button" class="small-button secondary-button" data-add="experience">Add role</button></div><p class="muted">Put one achievement per line — each line becomes a bullet.</p><div id="experienceList" class="resume-entries"></div><div class="resume-ai-actions"><button type="button" class="small-button ai-action" data-ai="rewriteExperience">Rewrite all experience</button></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Projects</h3><button type="button" class="small-button secondary-button" data-add="project">Add project</button></div><div id="projectList" class="resume-entries"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Education</h3><button type="button" class="small-button secondary-button" data-add="education">Add education</button></div><div id="educationList" class="resume-entries"></div></section>
+        <section class="resume-form-section"><h3>Skills</h3><div class="field"><label for="skills">Skills (separate with commas)</label><textarea id="skills" name="skills" rows="3" maxlength="1500"></textarea><div class="resume-ai-actions"><button class="small-button ai-action" type="button" data-ai="suggestSkills">Find skills in my resume</button></div></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Certifications</h3><button type="button" class="small-button secondary-button" data-add="certification">Add certification</button></div><div id="certificationList" class="resume-entries"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Languages</h3><button type="button" class="small-button secondary-button" data-add="language">Add language</button></div><div id="languageList" class="resume-entries"></div></section>
+        <section class="resume-form-section"><div class="resume-section-heading"><h3>Other links</h3><button type="button" class="small-button secondary-button" data-add="link">Add link</button></div><div id="linkList" class="resume-entries"></div></section>
+
+        <section class="resume-form-section"><h3>ATS optimization</h3><div class="field"><label for="targetJob">Target job description (optional)</label><textarea id="targetJob" rows="4" maxlength="12000" placeholder="Paste a job description to check keyword match."></textarea></div><button class="small-button ai-action" type="button" data-ai="optimizeATS">Optimize for ATS</button>
+          <div id="atsPanel" class="ats-panel" hidden aria-live="polite"></div>
+        </section>
+
+        <div class="form-actions resume-final-actions"><button id="downloadResume" type="button">Download Resume</button><button id="resetResume" type="button" class="save-job">Start over</button></div>
+        <p class="muted" id="saveHint">Signed-in users also get a copy saved to their dashboard resume library.</p>
       </form>
     </section>
-    <aside class="resume-preview-wrap" aria-label="Resume preview"><div class="resume-preview-label">Live preview</div><article id="resumePreview" class="resume-sheet template-modern"></article></aside>
+    <aside class="resume-preview-wrap" aria-label="Resume preview"><div class="resume-preview-label"><span>Live preview</span><span class="muted">A4 · dashed lines mark approximate page breaks</span></div><div id="resumePreviewFrame" class="resume-preview-frame"><article id="resumePreview" class="resume-sheet template-modern"></article></div></aside>
   </div>
 </main>
 </body>

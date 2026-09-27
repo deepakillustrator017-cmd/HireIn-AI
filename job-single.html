@@ -25,7 +25,7 @@
     <div class="job-detail-heading"><img id="jobLogo" class="job-detail-logo" alt=""><div><p id="jobCategory" class="muted"></p><h1 id="jobTitle"></h1><p id="jobCompany" class="job-company"></p></div></div>
     <div id="jobMeta" class="job-meta"></div>
     <div id="jobSalary" class="job-salary"></div>
-    <div class="job-detail-actions"><a id="applyNow" class="small-button" href="#">Apply Now</a><button id="saveJob" class="save-job" type="button">Save job</button></div>
+    <div class="job-detail-actions"><a id="applyNow" class="small-button" href="#">Apply Now</a><button id="saveJob" class="save-job" type="button" aria-pressed="false">Save job</button><a id="checkAts" class="small-button secondary-button" href="/ats.html">Check my ATS match</a></div>
     <section class="job-detail-section"><h2>About the role</h2><div id="jobDescription" class="job-prose"></div></section>
     <section id="responsibilitiesSection" class="job-detail-section" hidden><h2>Responsibilities</h2><div id="jobResponsibilities" class="job-prose"></div></section>
     <section id="requirementsSection" class="job-detail-section" hidden><h2>Requirements</h2><div id="jobRequirements" class="job-prose"></div></section>
@@ -33,6 +33,7 @@
     <section id="benefitsSection" class="job-detail-section" hidden><h2>Benefits</h2><div id="jobBenefits" class="job-prose"></div></section>
     <section class="job-detail-section"><h2>Company</h2><p id="companyInfo" class="job-prose"></p></section>
   </article>
+  <section id="relatedJobs" class="related-jobs" aria-labelledby="relatedHeading" hidden><h2 id="relatedHeading">Related jobs</h2><div id="relatedList" class="grid"></div></section>
 </main>
 </body>
 </html>

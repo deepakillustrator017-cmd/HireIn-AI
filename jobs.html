@@ -22,14 +22,16 @@
   <form id="searchForm" class="jobs-toolbar"><label class="sr-only" for="search">Search jobs</label><input id="search" type="search" aria-label="Search by role, company, skill, or location" placeholder="Search by role, company, skill, or location"><button type="submit">Search</button></form>
   <section class="panel job-filters" aria-label="Job filters">
     <div class="form-grid">
-      <div class="field"><label for="filterCompany">Company</label><select id="filterCompany"><option value="">All companies</option></select></div>
+      <div class="field"><label for="filterCategory">Category</label><select id="filterCategory"><option value="">All categories</option></select></div>
       <div class="field"><label for="filterLocation">Location</label><select id="filterLocation"><option value="">All locations</option></select></div>
       <div class="field"><label for="filterExperience">Experience</label><select id="filterExperience"><option value="">Any experience</option><option value="entry">Entry level</option><option value="mid">Mid level</option><option value="senior">Senior level</option></select></div>
       <div class="field"><label for="filterSalary">Minimum salary</label><select id="filterSalary"><option value="0">Any salary</option><option value="300000">₹3 LPA+</option><option value="600000">₹6 LPA+</option><option value="1000000">₹10 LPA+</option><option value="1500000">₹15 LPA+</option></select></div>
-      <div class="field"><label for="filterMode">Work mode</label><select id="filterMode"><option value="">Any work mode</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></div>
+      <div class="field"><label for="filterMode">Work mode</label><select id="filterMode"><option value="">Remote, hybrid or onsite</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></div>
       <div class="field"><label for="filterType">Employment type</label><select id="filterType"><option value="">Any employment type</option><option>Full time</option><option>Part time</option><option>Contract</option><option>Freelance</option><option>Internship</option></select></div>
+      <div class="field"><label for="filterCompany">Company</label><select id="filterCompany"><option value="">All companies</option></select></div>
       <div class="field"><label for="sortJobs">Sort by</label><select id="sortJobs"><option value="newest">Newest</option><option value="salary-high">Salary: high to low</option><option value="salary-low">Salary: low to high</option></select></div>
     </div>
+    <div class="job-filter-actions"><button type="button" id="clearFilters" class="save-job">Clear filters</button></div>
   </section>
   <p id="jobsMessage" class="notice" role="status" aria-live="polite"></p>
   <p id="jobsCount" class="jobs-count" aria-live="polite"></p>
