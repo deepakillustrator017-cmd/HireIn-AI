@@ -17,6 +17,7 @@ create table if not exists public.profiles (
 alter table public.profiles add column if not exists phone text;
 alter table public.profiles add column if not exists email text;
 alter table public.profiles add column if not exists avatar_url text;
+alter table public.profiles add column if not exists is_suspended boolean not null default false;
 alter table public.profiles add column if not exists updated_at timestamptz not null default now();
 update public.profiles p set email = u.email from auth.users u where p.user_id = u.id and p.email is distinct from u.email;
 

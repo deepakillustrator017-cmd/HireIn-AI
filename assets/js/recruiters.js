@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     welcomeEl.textContent = "Welcome, " + name + ". Manage your published opportunities, review applicants, and track hiring analytics.";
   }
 
+  if (role === "admin") {
+    var adminBtn = document.getElementById("adminPanelLink");
+    if (adminBtn) adminBtn.hidden = false;
+  }
+
   // Local state
   var state = {
     user: user,

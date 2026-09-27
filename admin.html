@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#6C3EF4">
-  <title>Recruiter Dashboard | HireIn AI</title>
+  <title>Admin Control Center | HireIn AI</title>
   <link rel="stylesheet" href="assets/css/hirein-app.css">
+  <link rel="stylesheet" href="assets/css/resume.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="assets/js/supabase-client.js"></script>
   <script defer src="assets/js/admin.js"></script>
@@ -13,22 +14,362 @@
 <body>
 <header class="site-header"><div class="site-header-inner">
   <a class="site-brand" href="/">HireIn AI</a>
-  <nav class="site-menu" id="siteMenu" aria-label="Main navigation"><a href="/">Home</a><a href="/jobs.html">Jobs</a><a href="/resume-ai.html">AI Resume</a><a href="/ats.html">ATS Checker</a><a href="/dashboard.html">Dashboard</a><a href="/recruiters.html">Recruiters</a></nav>
-  <div class="site-actions"><button class="site-signin" type="button" data-logout>Log Out</button><button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button></div>
+  <nav class="site-menu" id="siteMenu" aria-label="Main navigation">
+    <a href="/">Home</a>
+    <a href="/jobs.html">Jobs</a>
+    <a href="/resume-ai.html">AI Resume</a>
+    <a href="/ats.html">ATS Checker</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/recruiters.html">Recruiters</a>
+    <a href="/admin.html" aria-current="page">Admin</a>
+  </nav>
+  <div class="site-actions">
+    <button class="site-signin" type="button" data-logout>Log Out</button>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Open menu"><span></span></button>
+  </div>
 </div></header>
+
 <main class="page-shell">
-  <section class="page-heading"><div><h1>Recruiter Dashboard</h1><p>Manage your published opportunities and applications.</p></div><div class="form-actions"><a class="small-button" href="/post-job.html">Post a Job</a><a class="small-button" href="/applicants.html">View Applicants</a></div></section>
-  <p id="adminMessage" class="notice" role="status" aria-live="polite"></p>
-  <section id="adminContent" class="panel" hidden>
-    <div id="analyticsGrid" class="stat-grid" aria-label="Recruiter analytics"><div class="stat-card"><span>Job views</span><strong id="totalViews">0</strong></div><div class="stat-card"><span>Applications</span><strong id="totalApplications">0</strong></div><div class="stat-card"><span>Shortlisted</span><strong id="totalShortlisted">0</strong></div><div class="stat-card"><span>View to application</span><strong id="conversionRate">0%</strong></div></div>
-    <div class="table-wrap"><table><thead><tr><th>Job</th><th>Company</th><th>Location</th><th>Salary</th><th>Actions</th></tr></thead><tbody id="jobRows"><tr><td colspan="5" class="empty">Loading jobs...</td></tr></tbody></table></div>
-    <section id="adminManagement" class="section-stack" hidden style="margin-top:24px">
-      <section><h2>Accounts and recruiter approvals</h2><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Account ID</th><th>Role</th><th>Action</th></tr></thead><tbody id="accountRows"></tbody></table></div></section>
-      <section><h2>Companies</h2><div class="table-wrap"><table><thead><tr><th>Company</th><th>Website</th><th>Approval</th><th>Action</th></tr></thead><tbody id="companyRows"></tbody></table></div></section>
-      <section><h2>Reports</h2><p id="reportSummary" class="muted"></p></section>
-    </section>
+  <!-- Heading & Actions -->
+  <section class="page-heading">
+    <div>
+      <h1>Admin Control Center</h1>
+      <p id="adminWelcome">Platform governance, user management, recruiter approvals, companies CRUD, and system notifications.</p>
+    </div>
+    <div class="form-actions">
+      <button class="small-button" id="openCreateCompanyBtn" type="button">+ Add Company</button>
+      <a class="small-button secondary-button" href="#notificationsSection">📢 Send Notification</a>
+      <button class="small-button secondary-button" id="refreshAdminBtn" type="button">↻ Refresh</button>
+    </div>
   </section>
+
+  <!-- Notice Message Banner -->
+  <p id="adminMessage" class="notice" role="status" aria-live="polite"></p>
+
+  <!-- Non-Admin Warning Banner (Shown if user is not role = admin) -->
+  <section id="unauthorizedWarning" class="panel empty-state" hidden>
+    <h3>Administrator Access Required</h3>
+    <p>This portal is restricted to authorized platform administrators. Your account does not have admin permissions.</p>
+    <div class="form-actions" style="margin-top:12px">
+      <a class="small-button" href="/dashboard.html">Candidate Dashboard</a>
+      <a class="small-button secondary-button" href="/recruiters.html">Recruiter Dashboard</a>
+      <button class="small-button secondary-button" type="button" data-logout>Sign Out</button>
+    </div>
+  </section>
+
+  <!-- Main Admin Workspace -->
+  <div id="adminContent" class="section-stack" hidden>
+
+    <!-- 1. Platform Reports & Metrics Cards -->
+    <section class="stat-grid-6" aria-label="Platform Key Performance Indicators">
+      <div class="stat-card">
+        <span>Total Users</span>
+        <strong id="statTotalUsers">0</strong>
+        <span class="muted">All registered</span>
+      </div>
+      <div class="stat-card">
+        <span>Recruiters</span>
+        <strong id="statRecruiters">0</strong>
+        <span class="muted" id="statRecruiterPct">0% of users</span>
+      </div>
+      <div class="stat-card">
+        <span>Candidates</span>
+        <strong id="statCandidates">0</strong>
+        <span class="muted" id="statCandidatePct">0% of users</span>
+      </div>
+      <div class="stat-card">
+        <span>Active Jobs</span>
+        <strong id="statActiveJobs">0</strong>
+        <span class="muted" id="statTotalJobs">0 total</span>
+      </div>
+      <div class="stat-card">
+        <span>Applications</span>
+        <strong id="statApplications">0</strong>
+        <span class="muted">Total submitted</span>
+      </div>
+      <div class="stat-card">
+        <span>ATS Reports</span>
+        <strong id="statAtsReports">0</strong>
+        <span class="muted">Resumes parsed</span>
+      </div>
+    </section>
+
+    <!-- 2. Responsive SVG Platform Analytics Charts -->
+    <section class="chart-grid" aria-label="Platform Visual Analytics">
+      <!-- User Distribution Chart -->
+      <article class="panel chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>User Distribution by Role</h2>
+            <p>Platform accounts breakdown across roles</p>
+          </div>
+          <span class="badge badge-admin" id="chartUsersTotal">0 total users</span>
+        </div>
+        <div id="userDistributionChart" class="chart-svg-wrap" aria-label="User distribution chart">
+          <!-- Dynamically generated SVG -->
+        </div>
+      </article>
+
+      <!-- Platform Activity & Volume Chart -->
+      <article class="panel chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>Platform Activity & Volume</h2>
+            <p>System-wide hiring funnel and engagement metrics</p>
+          </div>
+          <div class="chart-legend">
+            <span><i class="legend-dot" style="background:#6C3EF4"></i> Volume</span>
+          </div>
+        </div>
+        <div id="platformActivityChart" class="chart-svg-wrap" aria-label="Platform activity chart">
+          <!-- Dynamically generated SVG -->
+        </div>
+      </article>
+    </section>
+
+    <!-- 3. Recruiter Approvals -->
+    <section class="panel" id="approvalsSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>Recruiter Approvals</h2>
+          <p class="muted">Review pending recruiter accounts and corporate employer verification requests.</p>
+        </div>
+        <span class="badge badge-warning" id="pendingApprovalsBadge">0 pending</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Recruiter</th>
+              <th>Email</th>
+              <th>Company Information</th>
+              <th>Website</th>
+              <th>Company Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recruiterApprovalRows">
+            <tr><td colspan="6" class="empty">Loading recruiter approval requests…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. User Management -->
+    <section class="panel" id="usersSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>User Management</h2>
+          <p class="muted">View accounts, filter by role, update permissions, or toggle account status.</p>
+        </div>
+      </div>
+
+      <!-- User Filters Toolbar -->
+      <div class="recruiter-toolbar">
+        <input type="search" id="userSearchInput" placeholder="Search by user name, email, or user ID…" aria-label="Search users">
+        <select id="userRoleFilter" aria-label="Filter by account role">
+          <option value="all">All Roles</option>
+          <option value="candidate">Candidates</option>
+          <option value="recruiter">Recruiters</option>
+          <option value="admin">Administrators</option>
+        </select>
+        <select id="userStatusFilter" aria-label="Filter by account status">
+          <option value="all">All Statuses</option>
+          <option value="active">Active Accounts</option>
+          <option value="suspended">Suspended Accounts</option>
+        </select>
+      </div>
+
+      <!-- Users Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Account ID</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userManagementRows">
+            <tr><td colspan="6" class="empty">Loading user accounts…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. Companies CRUD -->
+    <section class="panel" id="companiesSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>Companies Directory (CRUD)</h2>
+          <p class="muted">Create, edit, approve, or delete employer companies.</p>
+        </div>
+        <button class="small-button" id="createCompanyBtn" type="button">+ Create Company</button>
+      </div>
+
+      <!-- Company Filters Toolbar -->
+      <div class="recruiter-toolbar">
+        <input type="search" id="companySearchInput" placeholder="Search company by name or location…" aria-label="Search companies">
+        <select id="companyApprovalFilter" aria-label="Filter by approval status">
+          <option value="all">All Companies</option>
+          <option value="approved">Approved Only</option>
+          <option value="pending">Pending Approval</option>
+        </select>
+      </div>
+
+      <!-- Companies Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Website</th>
+              <th>Approval Status</th>
+              <th>Posted Jobs</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminCompanyRows">
+            <tr><td colspan="6" class="empty">Loading companies…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. Notifications System -->
+    <section class="panel" id="notificationsSection">
+      <div class="section-head" style="margin-bottom:16px">
+        <div>
+          <h2>Platform Notifications</h2>
+          <p class="muted">Broadcast platform updates or send targeted notifications stored in the notifications table.</p>
+        </div>
+      </div>
+
+      <!-- Notification Dispatch Form -->
+      <form id="notificationForm" class="panel" style="background:#faf9ff;border:1px solid #e2dbfc;margin-bottom:24px">
+        <h3 style="margin-top:0">Dispatch Notification</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label for="notifyAudience">Target Audience</label>
+            <select id="notifyAudience" name="audience">
+              <option value="all">Broadcast to All Users</option>
+              <option value="recruiter">All Recruiters</option>
+              <option value="candidate">All Candidates</option>
+              <option value="single">Specific User (by ID)</option>
+            </select>
+          </div>
+          <div class="field" id="singleUserField" hidden>
+            <label for="notifyUserId">Recipient User ID</label>
+            <input id="notifyUserId" name="user_id" placeholder="UUID of the recipient user">
+          </div>
+          <div class="field">
+            <label for="notifyTitle">Notification Title</label>
+            <input id="notifyTitle" name="title" required maxlength="120" placeholder="e.g. Platform Update or New Feature Available">
+          </div>
+          <div class="field">
+            <label for="notifyHref">Action Link (Optional URL)</label>
+            <input id="notifyHref" name="href" maxlength="255" placeholder="e.g. /jobs.html or /recruiters.html">
+          </div>
+        </div>
+        <div class="field">
+          <label for="notifyBody">Message Body</label>
+          <textarea id="notifyBody" name="body" rows="3" required maxlength="500" placeholder="Enter notification message text here…"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="sendNotificationBtn">📢 Dispatch Notification</button>
+        </div>
+      </form>
+
+      <!-- Sent Notifications Log -->
+      <h3>Recent Notifications Log</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Message Body</th>
+              <th>Recipient</th>
+              <th>Link</th>
+              <th>Sent Date</th>
+            </tr>
+          </thead>
+          <tbody id="sentNotificationRows">
+            <tr><td colspan="5" class="empty">Loading notification history…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
 </main>
+
+<!-- Create / Edit Company Modal -->
+<dialog id="companyModal" class="resume-dialog" aria-labelledby="companyModalTitle">
+  <div class="resume-dialog-inner" style="height:auto">
+    <header>
+      <h2 id="companyModalTitle">Create Company</h2>
+      <div>
+        <button type="button" class="small-button" id="closeCompanyModalBtn">Close</button>
+      </div>
+    </header>
+    <div class="dialog-content">
+      <form id="companyForm">
+        <input type="hidden" id="companyEditId" name="id">
+        <div class="form-grid">
+          <div class="field">
+            <label for="companyName">Company Name *</label>
+            <input id="companyName" name="name" required maxlength="120" placeholder="e.g. Acme Corporation">
+          </div>
+          <div class="field">
+            <label for="companyWebsite">Website</label>
+            <input id="companyWebsite" name="website" type="url" maxlength="255" placeholder="https://example.com">
+          </div>
+          <div class="field">
+            <label for="companyLocation">Location</label>
+            <input id="companyLocation" name="location" maxlength="120" placeholder="e.g. Bengaluru, India or Remote">
+          </div>
+          <div class="field">
+            <label for="companyLogo">Logo URL</label>
+            <input id="companyLogo" name="logo_url" type="url" maxlength="500" placeholder="https://…">
+          </div>
+        </div>
+        <div class="field">
+          <label for="companyDescription">Company Description</label>
+          <textarea id="companyDescription" name="description" rows="3" maxlength="1000" placeholder="Brief overview of the company…"></textarea>
+        </div>
+        <div class="field" style="flex-direction:row;align-items:center;gap:10px">
+          <input type="checkbox" id="companyApproved" name="is_approved" style="width:20px;height:20px">
+          <label for="companyApproved" style="font-weight:600;cursor:pointer">Approved Corporate Employer</label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="saveCompanyBtn">Save Company</button>
+          <button type="button" class="small-button secondary-button" id="cancelCompanyBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<!-- Company Details Inspector Modal -->
+<dialog id="companyInfoModal" class="resume-dialog" aria-labelledby="companyInfoTitle">
+  <div class="resume-dialog-inner" style="height:auto">
+    <header>
+      <h2 id="companyInfoTitle">Company Details</h2>
+      <div>
+        <button type="button" class="small-button" id="closeCompanyInfoBtn">Close</button>
+      </div>
+    </header>
+    <div class="dialog-content" id="companyInfoBody">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+</dialog>
+
 <footer class="site-footer"><div class="site-footer-inner">
   <div class="site-footer-brand"><a class="site-brand" href="/">HireIn AI</a><p>AI-powered hiring. Find live jobs, build an ATS-friendly resume and track every application in one place.</p></div>
   <nav class="site-footer-links" aria-label="Footer">

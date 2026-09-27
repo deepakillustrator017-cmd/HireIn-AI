@@ -308,3 +308,16 @@ body:where(:not(.hirein-home)) main a:not(.small-button):not(.btn):not(.site-sig
 .status-select{padding:6px 10px!important;min-height:36px!important;font-size:13px!important;border-radius:8px!important}
 @media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
 @media(max-width:620px){.recruiter-toolbar{flex-direction:column;align-items:stretch}.recruiter-toolbar input,.recruiter-toolbar select{width:100%}}
+
+/* Admin Control Center Components */
+.stat-grid-6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:24px}
+.badge-admin{background:#ede7ff;color:#5b32df}
+.badge-suspended{background:#fef3f2;color:#b42318}
+.dialog-content{padding:24px}
+.dialog-content h2{margin:0 0 16px;font-size:20px;font-weight:700}
+.dialog-content .field{margin-bottom:14px}
+.dialog-content .form-actions{margin-top:20px;display:flex;justify-content:flex-end;gap:10px}
+.notice-box{padding:14px;border-radius:12px;background:#f3efff;border:1px solid #d9cffb;color:#4c2fb8;font-size:14px;margin-bottom:18px}
+@media(max-width:1100px){.stat-grid-6{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.stat-grid-6{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
